@@ -16,6 +16,7 @@ def main():
     try:
         port_file = open("server/port.info", "r")
         PORT = int(port_file.readline())
+        port_file.close()
     except:
         print('file not found')    
 
