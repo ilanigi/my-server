@@ -12,9 +12,7 @@
 import socket
 HOST = "127.0.0.1"  
 
-
 def main():
-
     try:
         port_file = open("port.info", "r")
         PORT = int(port_file.readline())
@@ -25,14 +23,14 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
         client_socket.bind((HOST, PORT))
         client_socket.listen()
+        print("server ready.")
         conn, addr = client_socket.accept()
+        print("client connected.")
         with conn:
             print(f"Connected by {addr}")
             while True:
                 data = conn.recv(1024)
-                if not data:
-                    break
-                conn.sendall(data)
+                print(data)
 
 
 if __name__ == '__main__':
