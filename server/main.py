@@ -14,7 +14,7 @@ HOST = "127.0.0.1"
 
 def main():
     try:
-        port_file = open("port.info", "r")
+        port_file = open("server/port.info", "r")
         PORT = int(port_file.readline())
     except:
         print('file not found')    
