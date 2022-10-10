@@ -4,3 +4,5 @@ server/__pycache__/main.cpython-310.pyc
 client/main
 client/Client
 .vscode/settings.json
+.vs
+CppProperties.json
