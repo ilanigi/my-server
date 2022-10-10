@@ -1,5 +1,6 @@
-#include "Client.h"
+#include "Client.hpp"
 #include "utils.h"
+#include "models.hpp"
 
 #include <string>
 #include <stdexcept>
@@ -39,6 +40,7 @@ std::vector<std::string> Client::get_connection_credentials()
   std::vector<std::string> to_ret{address, port};
   return to_ret;
 }
+
 bool Client::user_file_exist()
 {
   std::string info_file_name = "me.info";
@@ -52,6 +54,7 @@ std::string get_user_name_from_file()
   std::ifstream transfer_file(TRANSFER_FILE);
   getline(transfer_file, buff, '\n');
   getline(transfer_file, user_name, '\n');
+  return user_name;
 }
 
 void Client::register_user()
@@ -61,4 +64,24 @@ void Client::register_user()
     print("user credentials already exist.");
     return;
   }
+  
+  std::string user_name = this->get_user_name_from_file();
+  res_header header;
+  header.data.code = REQ_CODE::REGISTER;
+  header.data.version = CLIENT_VERSION;
+  header.data.payload_size = REQ_PAYLOAD_SIZE::REGISTER;  
+
+  char req[REQ_PAYLOAD_SIZE::REGISTER + sizeof(res_header)] = {0};
+  *req = *header.buff;
+
+  int i = sizeof(res_header);
+  for (auto letter : user_name)
+  {
+      req[i++] = letter;
+  }
+  
+  // boost::asio::write(this->socket, boost::asio::buffer(req,REQ_PAYLOAD_SIZE::REGISTER + sizeof(res_header)));
+  // resice
+  
+
 }
