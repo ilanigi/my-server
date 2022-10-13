@@ -1,11 +1,12 @@
 .vscode/c_cpp_properties.json
 .vscode/tasks.json
 server/__pycache__/main.cpython-310.pyc
-client/main
-client/Client
+# client/main
+# client/Client
 .vscode/settings.json
 .vs
 CppProperties.json
 .vscode/launch.json
 client/client1/Debug/
 client/packages/
+client/packages/x64/
