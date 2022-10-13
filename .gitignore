@@ -8,5 +8,11 @@ server/__pycache__/main.cpython-310.pyc
 CppProperties.json
 .vscode/launch.json
 client/client1/Debug/
+client/Debug
 client/packages/
-client/packages/x64/
+client/client1/x64/
+client/x64/
+client/client1/client1.vcxproj
+client/client1/client1.vcxproj.filters
+client/client1/client1.vcxproj.user
+client/client1/packages.config
