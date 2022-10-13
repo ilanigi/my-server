@@ -25,7 +25,7 @@ def main():
         client_socket.bind((HOST, PORT))
         client_socket.listen()
         print("server ready.")
-        conn, addr = client_socket.accept()
+        conn, addr, _ = client_socket.accept()
         print("client connected.")
         with conn:
             print(f"Connected by {addr}")
