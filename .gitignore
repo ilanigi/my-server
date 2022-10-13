@@ -6,3 +6,6 @@ client/Client
 .vscode/settings.json
 .vs
 CppProperties.json
+.vscode/launch.json
+client/client1/Debug/
+client/packages/
