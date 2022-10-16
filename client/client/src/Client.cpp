@@ -77,13 +77,17 @@ void Client::register_user()
     header.data.payload_size = REQ_PAYLOAD_SIZE::REGISTER_S;
 
     char req[REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)] = { 0 };
-    *req = *header.buff;
-
-    int i = sizeof(res_header);
+    int i = 0
+        ;
+    while (i < sizeof(res_header))
+    {
+        req[i] = header.buff[i];
+        i++;
+    }
+    
     for (auto letter : user_name)
     {
         req[i++] = letter;
     }
-    //boost::asio::write(*this->socket, boost::asio::buffer(req, REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)));
-
+    boost::asio::write(*this->socket, boost::asio::buffer(req, REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)));
 }
