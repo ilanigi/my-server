@@ -10,17 +10,18 @@
 
 Client::Client()
 {
-
     std::vector<std::string> connection_credentials = this->get_connection_credentials();
     boost::asio::io_context io_context;
     boost::asio::ip::tcp::socket client_socket(io_context);
     boost::asio::ip::tcp::resolver resolver(io_context);
     this->socket = &client_socket;
     boost::asio::connect(client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));
+    std::cout << "Server is connected." << std::endl;
 }
 Client::~Client()
 {
     this->socket->close();
+    std::cout << "Server is disconnected." << std::endl;
 }
 
 std::vector<std::string> Client::get_connection_credentials()
@@ -29,7 +30,7 @@ std::vector<std::string> Client::get_connection_credentials()
     std::string port;
 
     std::ifstream transfer_file(TRANSFER_FILE);
-    bool a = transfer_file.good();
+    //bool a = transfer_file.good();
     getline(transfer_file, address, ':');
     getline(transfer_file, port, '\n');
     transfer_file.close();
@@ -66,9 +67,11 @@ void Client::register_user()
 {
     if (this->user_file_exist())
     {
-        std::cout << "user credentials already exist." << std::endl;
+        std::cout << "User credentials already exist." << std::endl;
         return;
     }
+
+    std::cout << "Register user" << std::endl;
 
     std::string user_name = this->get_user_name_from_file();
     res_header header = { 0 };
@@ -89,5 +92,5 @@ void Client::register_user()
     {
         req[i++] = letter;
     }
-    boost::asio::write(*this->socket, boost::asio::buffer(req, REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)));
+    boost::asio::write(*(this->socket), boost::asio::buffer(req, REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)));
 }

@@ -24,7 +24,7 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
         client_socket.bind((HOST, PORT))
         client_socket.listen()
-        print("server ready.")
+        print("server is ready for connections")
         conn, addr = client_socket.accept()
         print("client connected.")
         with conn:
