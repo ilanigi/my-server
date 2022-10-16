@@ -8,7 +8,8 @@ CppProperties.json
 client/bin/
 client/.vs/
 client/packages/
-client/client.sln
 client/client/client.vcxproj
 client/client/client.vcxproj.filters
 client/client/client.vcxproj.user
+client/client/packages.config
+client/client.sln
