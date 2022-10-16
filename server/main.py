@@ -25,13 +25,13 @@ def main():
         client_socket.bind((HOST, PORT))
         client_socket.listen()
         print("server ready.")
-        conn, addr, _ = client_socket.accept()
+        conn, addr = client_socket.accept()
         print("client connected.")
         with conn:
-            print(f"Connected by {addr}")
-            while True:
-                data = conn.recv(1024)
-                print(data)
+            print(f"Connected by {addr[0]}")
+            
+            data = conn.recv(1024)
+            print(data)
 
 
 if __name__ == '__main__':
