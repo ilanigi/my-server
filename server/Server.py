@@ -5,8 +5,6 @@ import socket
 HOST = "127.0.0.1"  
 TIMEOUT = 1
 
-
-
 class Server:
     def __init__(self):
         PORT = self.__get_port_from_file()
