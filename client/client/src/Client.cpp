@@ -7,33 +7,18 @@
 #include <boost/asio.hpp>
 #include <fstream>
 #include <iostream>
-#include <memory>
 
-
-Pre_connection::Pre_connection() : client_socket(client_io_context) {}
-Pre_connection::~Pre_connection() {
-    this->client_socket.close();
-}
-
-Client::Client()
+Client::Client() : client_socket(client_io_context)
 {
     std::vector<std::string> connection_credentials = this->get_connection_credentials();
-    boost::asio::ip::tcp::resolver resolver(pre_connection_.client_io_context);
-    boost::asio::connect(pre_connection_.client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));
+    boost::asio::ip::tcp::resolver resolver(client_io_context);
+    boost::asio::connect(client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));
     std::cout << "Server is connected." << std::endl;
 }
 
-
-boost::asio::ip::tcp::socket Client::get_socket() {
-    return this->pre_connection_.client_socket;
-}
-
-
-
-
-
 Client::~Client()
 {
+    client_socket.close();
     std::cout << "Server is disconnected." << std::endl;
 }
 
@@ -108,5 +93,5 @@ void Client::register_user()
         req[i++] = letter;
     }
 
-    boost::asio::write(this->get_socket(), boost::asio::buffer(req, REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)));
+    boost::asio::write(client_socket, boost::asio::buffer(req, REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)));
 }
