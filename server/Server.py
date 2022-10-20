@@ -1,6 +1,7 @@
 import selectors
 import types    
 import socket
+from DbService import DB
 
 HOST = "127.0.0.1"  
 MESSAGE_SIZE = 1024
@@ -10,6 +11,7 @@ class Server:
     def __init__(self):
         try:
             PORT = self.__get_port_from_file()
+            self.db = DB()
             self.__init_listening(PORT)
             self.__listen()
         except Exception as error:
