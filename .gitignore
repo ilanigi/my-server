@@ -13,3 +13,4 @@ client/client/client.vcxproj.filters
 client/client/client.vcxproj.user
 client/client/packages.config
 client/client.sln
+server/__pycache__/
