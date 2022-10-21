@@ -4,6 +4,7 @@ import types
 import socket
 
 from Services import Services
+from Database import Database
 
 
 HOST = "127.0.0.1"  
@@ -14,7 +15,9 @@ class Server:
     def __init__(self,test=False):
         try:
             PORT = self.__get_port_from_file()
-            self.services = Services()
+            db = Database()
+            self.services = Services(db)
+            
             if test:
                 return 
             self.__init_listening(PORT)
