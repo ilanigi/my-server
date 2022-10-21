@@ -1,24 +1,29 @@
+from pickle import FALSE
 import selectors
 import types    
 import socket
-from Services.Services import Services
+
+from Services import Services
+
 
 HOST = "127.0.0.1"  
 MESSAGE_SIZE = 1024
 TIMEOUT = 1
 
 class Server:
-    def __init__(self):
+    def __init__(self,test=False):
         try:
             PORT = self.__get_port_from_file()
             self.services = Services()
-            
+            if test:
+                return 
             self.__init_listening(PORT)
             self.__listen()
         except Exception as error:
             print(error)
         finally:
-            self.__selector.close()
+            if not test:
+                self.__selector.close()
 
     def __listen(self):
         while True:
