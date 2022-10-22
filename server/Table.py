@@ -71,7 +71,9 @@ class Table:
             table=self.__name, filters=filter)
 
         return self.__execute_read(query)
-
+    
+    # TODO: update all queries by using formaring and sqlite3 excute :
+    # https://stackoverflow.com/questions/61009846/sqlite-parameter-and-field-name-substitution-with-python
     def update(self, filter: Tuple, mutations: Tuple):
         raw_filter_columns, raw_filter_values = filter
         raw_mutations_columns, raw_mutations_values = mutations
@@ -89,6 +91,7 @@ class Table:
         self.__execute_write(query)
 
     def delete(self):
+        """DELETE FROM table_name WHERE condition"""
         pass
 
     def __execute_read(self, filter):

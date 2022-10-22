@@ -23,7 +23,7 @@ class User:
         return user_exist
         
 
-    def save_new_to_db(self,user_name:str):
+    def save_new_to_db(self, user_name:str):
         user_id = str(uuid.uuid4())
         now = datetime.now().timestamp()
 
