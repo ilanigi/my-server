@@ -46,7 +46,7 @@ class Table:
         query = """INSERT INTO {table} ({columns}) VALUES ({values});""".format(
             table=self.__name, columns=columns, values=values)
 
-        self.__execute(query)
+        self.__execute_write(query)
 
     def __lists_to_filter(self, raw_columns: List, raw_values: List):
 
@@ -72,8 +72,21 @@ class Table:
 
         return self.__execute_read(query)
 
-    def update(self):
-        return
+    def update(self, filter: Tuple, mutations: Tuple):
+        raw_filter_columns, raw_filter_values = filter
+        raw_mutations_columns, raw_mutations_values = mutations
+
+        self.__check_input(raw_filter_columns, raw_filter_values)
+        self.__check_input(raw_mutations_columns, raw_mutations_values)
+
+        mutation = self.__lists_to_filter(
+            raw_mutations_columns, raw_mutations_values)
+        filter = self.__lists_to_filter(raw_filter_columns, raw_filter_values)
+
+        query = """UPDATE {table} SET {mutation} WHERE {filter}""".format(
+            table=self.__name, mutation=mutation, filter=filter)
+
+        self.__execute_write(query)
 
     def delete(self):
         pass
@@ -82,7 +95,7 @@ class Table:
         res = self.__curser.execute(filter)
         return res.fetchone()
 
-    def __execute(self, query):
+    def __execute_write(self, query):
         res = self.__curser.execute(query)
         res = self.__connection.commit()
 
