@@ -13,8 +13,8 @@ def Test(server:Server):
         server.services.users.save_new_to_db("gilad")
         print("     When user exist")
         exist = server.services.users.user_exist("gilad")
-        if not exist:
-            raise Exception('user should exist')
+        if exist:
+            print("             user exist")
         else:
-            print("user exist")
+            raise Exception('user should exist')
 
