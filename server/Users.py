@@ -28,6 +28,10 @@ class User:
         now = datetime.now().timestamp()
 
         self.db.users.create(["id", "name", "lastSeen"], [user_id, user_name, now])
+
+    def add_public_key(self, user_name:str,public_key:str ):
+        
+        self.db.users.update((["name"],[user_name]),(["publicKey"],[public_key]))
         
     
     
