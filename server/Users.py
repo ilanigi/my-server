@@ -10,17 +10,18 @@ class User:
         self.db = db
 
     def user_exist(self, user_name:str):
-        # # add check by the book
-
-        # res = self.__curser.execute(f"SELECT * FROM clients WHERE name='{user_name}'")
-        # user_exist = not res.fetchone() is None
+        # TODO: add check by the book
+        res = self.db.users.read(["name"],[user_name])
         
-        # if user_exist:
-            # now = datetime.now()
-            # self.__curser.execute("""UPDATE clients SET lastSeen = '{now}' WHERE name='{user_name}'""".format(now=now,user_name=user_name))
+        user_exist = not res is None 
+        
+        if user_exist:
+            user_id = res[0]
+            now = datetime.now().timestamp()
+            self.db.users.update((["id"], [user_id]),(["lastSeen"],[now]))
        
-        # return user_exist
-        pass
+        return user_exist
+        
 
     def save_new_to_db(self,user_name:str):
         user_id = str(uuid.uuid4())
