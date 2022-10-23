@@ -8,7 +8,7 @@ class Database:
         db_exist = path.isfile(DB_FILE)
         if not db_exist:
             new_file = open(DB_FILE, "x")
-            print("Databse created")
+            print("Database created")
         else:
             print("Database found")
 
