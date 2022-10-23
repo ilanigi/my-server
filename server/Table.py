@@ -3,10 +3,10 @@ from typing import List, Tuple
 
 
 class Table:
-    def __init__(self, cradeniales: Tuple, name: str, columns: List[Tuple[str, str, type]]):
+    def __init__(self, credentials: Tuple, name: str, columns: List[Tuple[str, str, type]]):
         self.__connection: Connection
         self.__curser: Cursor
-        self.__connection, self.__curser, db_exist = cradeniales
+        self.__connection, self.__curser, db_exist = credentials
         self.__name = name
 
         self.__types = {}
@@ -22,7 +22,7 @@ class Table:
     def __check_input(self, columns: List, values: List):
         if not len(columns) == len(values):
             raise Exception(
-                "values amount are not equel to columns to insert to amount")
+                "values amount are not equal to columns to insert to amount")
 
         # check types
         for i in range(len(columns)):
