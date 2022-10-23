@@ -34,43 +34,37 @@ class Table:
                 raise Exception("""value {val} is not of type {des}. insted {given} was given""".format(
                     val=columns[i], des=self.__types[columns[i]], given=type(values[i])))
 
-    def _init_create_input(self, raw_columns: List, raw_values: List):
+    def __init_create_input(self, raw_columns: List, raw_values: List):
         self.__check_input(raw_columns, raw_values)
         columns = self.__list_to_comma_string(raw_columns)
-        values = self.__list_to_comma_string(raw_values, True, raw_columns)
-        return columns, values
+        values_as_q_marks = self.__list_to_comma_string(raw_values, True)
+        return columns, values_as_q_marks
 
     def create(self, raw_columns: List, raw_values: List):
-        columns, values = self._init_create_input(raw_columns, raw_values)
+        columns, values_as_q_marks = self.__init_create_input(raw_columns, raw_values)
 
         query = """INSERT INTO {table} ({columns}) VALUES ({values});""".format(
-            table=self.__name, columns=columns, values=values)
+            table=self.__name, columns=columns, values=values_as_q_marks)
 
-        self.__execute_write(query)
+        self.__execute_write(query,tuple(raw_values))
 
-    def __lists_to_filter(self, raw_columns: List, raw_values: List):
+    def __lists_to_empty_filter(self, raw_columns: List, raw_values: List):
 
+        to_ret = ""
         for i in range(len(raw_columns)):
-            to_ret = ""
-            if self.__types[raw_columns[i]] == str:
-                to_ret += f"{raw_columns[i]}='{raw_values[i]}' AND"
-            else:
-                to_ret += f"{raw_columns[i]}={raw_values[i]} AND"
+            to_ret += f"{raw_columns[i]}= ? AND"
 
         to_ret = to_ret[0:-4]
-        return to_ret
-
-    def __init_read_input(self, raw_columns: List, raw_values: List):
-        self.__check_input(raw_columns, raw_values)
-        return self.__lists_to_filter(raw_columns, raw_values)
+        return to_ret    
 
     def read(self, raw_columns: List, raw_values: List):
-        filter = self.__init_read_input(raw_columns, raw_values)
+        self.__check_input(raw_columns, raw_values)
+        filter_with_q_marks = self.__lists_to_empty_filter(raw_columns, raw_values)
 
         query = """SELECT * FROM {table} WHERE {filters}""".format(
-            table=self.__name, filters=filter)
+            table=self.__name, filters=filter_with_q_marks)
 
-        return self.__execute_read(query)
+        return self.__execute_read(query,tuple(raw_values))
     
     # TODO: update all queries by using formaring and sqlite3 excute :
     # https://stackoverflow.com/questions/61009846/sqlite-parameter-and-field-name-substitution-with-python
@@ -81,9 +75,9 @@ class Table:
         self.__check_input(raw_filter_columns, raw_filter_values)
         self.__check_input(raw_mutations_columns, raw_mutations_values)
 
-        mutation = self.__lists_to_filter(
+        mutation = self.__lists_to_empty_filter(
             raw_mutations_columns, raw_mutations_values)
-        filter = self.__lists_to_filter(raw_filter_columns, raw_filter_values)
+        filter = self.__lists_to_empty_filter(raw_filter_columns, raw_filter_values)
 
         query = """UPDATE {table} SET {mutation} WHERE {filter}""".format(
             table=self.__name, mutation=mutation, filter=filter)
@@ -94,13 +88,19 @@ class Table:
         """DELETE FROM table_name WHERE condition"""
         pass
 
-    def __execute_read(self, filter):
-        res = self.__curser.execute(filter)
+    def __execute_read(self, query:str, values:Tuple):
+        if not values == None:
+            res = self.__curser.execute(query,values)
+        else:
+            res = self.__curser.execute(query)
         return res.fetchone()
 
-    def __execute_write(self, query):
-        res = self.__curser.execute(query)
-        res = self.__connection.commit()
+    def __execute_write(self, query,values=None):
+        if not values==None :
+            res = self.__curser.execute(query,values)
+        else:
+            res = self.__curser.execute(query)
+        com = self.__connection.commit()
 
     def __create_new_table_query(self, columns):
         str_colomns = ""
@@ -112,13 +112,14 @@ class Table:
             name=self.__name, str_colomns=str_colomns)
         return query
 
-    def __list_to_comma_string(self, val_list: List, values: bool = False, columns: List = []):
+    def __list_to_comma_string(self, val_list: List, values: bool = False):
         to_ret = ""
         for i in range(len(val_list)):
             # adding quotation marks to string values
-            if values and self.__types[columns[i]] == str:
-                to_ret += f"'{val_list[i]}', "
+            if values:
+                to_ret += "?, "
             else:
                 to_ret += f"{val_list[i]}, "
+
         to_ret = to_ret[0:-2] + " "
         return to_ret
