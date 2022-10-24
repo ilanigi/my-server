@@ -3,7 +3,6 @@ import uuid
 from datetime import datetime
 from Database import Database
 
-
 class User:
     def __init__(self, db:Database):
         self.db = db
@@ -34,8 +33,7 @@ class User:
 
         self.db.users.create(["id", "name", "lastSeen"], [user_id, user_name, now])
 
-    def add_public_key(self, user_name:str,public_key:str ):
-        
+    def add_public_key(self, user_name:str,public_key:str ):    
         self.db.users.update((["name"],[user_name]),(["publicKey"],[public_key]))
     
     def add_AES_to_db(self,user_id:str,AESkey:str):
