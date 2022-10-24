@@ -35,12 +35,13 @@ class Table:
                     val=columns[i], des=self.__types[columns[i]], given=type(values[i])))
 
     def __init_create_input(self, raw_columns: List, raw_values: List):
-        self.__check_input(raw_columns, raw_values)
+        
         columns = self.__list_to_comma_string(raw_columns)
         values_as_q_marks = self.__list_to_comma_string(raw_values, True)
         return columns, values_as_q_marks
 
     def create(self, raw_columns: List, raw_values: List):
+        self.__check_input(raw_columns, raw_values)
         columns, values_as_q_marks = self.__init_create_input(raw_columns, raw_values)
 
         query = """INSERT INTO {table} ({columns}) VALUES ({values});""".format(
@@ -48,18 +49,21 @@ class Table:
 
         self.__execute_write(query,tuple(raw_values))
 
-    def __lists_to_empty_filter(self, raw_columns: List, raw_values: List):
+    def __lists_to_string_with_q_mark(self, raw_columns: List, values:bool=False):
 
         to_ret = ""
         for i in range(len(raw_columns)):
-            to_ret += f"{raw_columns[i]}= ? AND"
+            if values:
+                to_ret += f"{raw_columns[i]}=?, "
+            else:
+                to_ret += f"{raw_columns[i]}=? AND"
 
-        to_ret = to_ret[0:-4]
+        to_ret = to_ret[0:-2] if values else to_ret[0:-4]
         return to_ret    
 
     def read(self, raw_columns: List, raw_values: List):
         self.__check_input(raw_columns, raw_values)
-        filter_with_q_marks = self.__lists_to_empty_filter(raw_columns, raw_values)
+        filter_with_q_marks = self.__lists_to_string_with_q_mark(raw_columns)
 
         query = """SELECT * FROM {table} WHERE {filters}""".format(
             table=self.__name, filters=filter_with_q_marks)
@@ -75,14 +79,15 @@ class Table:
         self.__check_input(raw_filter_columns, raw_filter_values)
         self.__check_input(raw_mutations_columns, raw_mutations_values)
 
-        mutation = self.__lists_to_empty_filter(
-            raw_mutations_columns, raw_mutations_values)
-        filter = self.__lists_to_empty_filter(raw_filter_columns, raw_filter_values)
+        mutation_with_q_mark = self.__lists_to_string_with_q_mark(
+            raw_mutations_columns,values=True)
+        filter_with_q_mark = self.__lists_to_string_with_q_mark(raw_filter_columns)
 
         query = """UPDATE {table} SET {mutation} WHERE {filter}""".format(
-            table=self.__name, mutation=mutation, filter=filter)
+            table=self.__name, mutation=mutation_with_q_mark, filter=filter_with_q_mark)
 
-        self.__execute_write(query)
+        concatenated_values =  raw_mutations_values + raw_filter_values
+        self.__execute_write(query,tuple(concatenated_values))
 
     def delete(self):
         """DELETE FROM table_name WHERE condition"""
@@ -103,13 +108,13 @@ class Table:
         com = self.__connection.commit()
 
     def __create_new_table_query(self, columns):
-        str_colomns = ""
+        str_columns = ""
         for column in columns:
-            str_colomns += f"{column[0]} {column[1]}, "
+            str_columns += f"{column[0]} {column[1]}, "
 
-        str_colomns = str_colomns[0:-2]
-        query = """CREATE TABLE {name} ({str_colomns})""".format(
-            name=self.__name, str_colomns=str_colomns)
+        str_columns = str_columns[0:-2]
+        query = """CREATE TABLE {name} ({str_columns})""".format(
+            name=self.__name, str_columns=str_columns)
         return query
 
     def __list_to_comma_string(self, val_list: List, values: bool = False):
