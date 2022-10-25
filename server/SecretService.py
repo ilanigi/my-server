@@ -8,3 +8,6 @@ class SecretService:
     def create_AES_key(public_key:str):
         cipher = AES.new(public_key, AES.MODE_EAX)
         return cipher
+    
+    def decrypt_file():
+        pass
