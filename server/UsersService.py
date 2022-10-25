@@ -26,7 +26,6 @@ class Users:
             raise Exception("user not found")
         return res[0]
 
-
     def save_user_to_db(self, user_name:str):
         user_id = str(uuid.uuid4())
         now = datetime.now().timestamp()
@@ -36,7 +35,7 @@ class Users:
     def add_public_key(self, user_name:str,public_key:str ):    
         self.db.users.update((["name"],[user_name]),(["publicKey"],[public_key]))
     
-    def add_AES_to_db(self,user_id:str,AESkey:str):
+    def add_AES_key(self,user_id:str,AESkey:str):
         self.db.users.update((["id"],[user_id]),(["AESKey"],[AESkey]))
     
         
