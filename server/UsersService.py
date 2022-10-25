@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from Database import Database
 
-class User:
+class Users:
     def __init__(self, db:Database):
         self.db = db
 
