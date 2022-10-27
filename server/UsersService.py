@@ -15,7 +15,7 @@ class Users:
         
         if user_exist:
             user_id = res[0]
-            now = datetime.now().timestamp()
+            now = datetime.now()
             self.db.users.update((["id"], [user_id]),(["lastSeen"],[now]))
        
         return user_exist
@@ -28,7 +28,7 @@ class Users:
 
     def save_user_to_db(self, user_name:str):
         user_id = str(uuid.uuid4())
-        now = datetime.now().timestamp()
+        now = datetime.now()
 
         self.db.users.create(["id", "name", "lastSeen"], [user_id, user_name, now])
 

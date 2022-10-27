@@ -16,7 +16,7 @@ class Database:
         curser = connection.cursor()
 
         self.users = Table((connection, curser, db_exist), "clients", [("id", "VARCHAR PRIMARY KEY", str), (
-            "name", "VARCHAR UNIQUE", str), ("publicKey", "VARCHAR", str), ("lastSeen", "FLOAT", float), ("AESKey", "VARCHAR", str)])\
+            "name", "VARCHAR UNIQUE", str), ("publicKey", "VARCHAR", str), ("lastSeen", "VARCHAR", str), ("AESKey", "VARCHAR", str)])\
 
         self.files = Table((connection, curser, db_exist), "files", [("id", "VARCHAR PRIMARY KEY", str), (
             "name", "VARCHAR", str), ("pathName ", "VARCHAR UNIQUE", str), ("verified", "VARCHAR ", bool)])
