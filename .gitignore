@@ -14,3 +14,5 @@ client/client/client.vcxproj.user
 client/client/packages.config
 client/client.sln
 server/__pycache__/
+client/.vscode/launch.json
+client/.vscode/tasks.json
