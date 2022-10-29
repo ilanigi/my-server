@@ -16,3 +16,7 @@ client/client.sln
 server/__pycache__/
 client/.vscode/launch.json
 client/.vscode/tasks.json
+client/client/src/Client
+client/client/src/main
+client/client/src/transfer.info
+client/.vscode/settings.json
