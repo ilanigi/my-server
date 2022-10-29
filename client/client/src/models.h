@@ -2,6 +2,7 @@
 
 #define CLIENT_ID_SIZE 16
 #define CLIENT_VERSION 3
+#define USER_ID_SIZE  36
 
 #pragma pack(push,1)
 struct req_header_model {
@@ -48,8 +49,8 @@ union res_header
 };
 
 enum RES_CODE {
-    SUCCECFUL_REGISTER = 2100,
-    PUBLIC_KEY_RECIVED = 2102,
-    FILE_RECIVED = 2103,
-    MESSAGE_RECIVED = 2104
+    SUCCESSFUL_REGISTER = 2100,
+    PUBLIC_KEY_RECEIVED = 2102,
+    FILE_RECEIVED = 2103,
+    MESSAGE_RECEIVED = 2104
 };
