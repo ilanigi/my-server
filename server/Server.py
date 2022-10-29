@@ -1,11 +1,16 @@
-from pickle import FALSE
 import selectors
 import types    
 import socket
 
 from Services import Services
 from Database import Database
-from Router import Router
+from struct import unpack_from
+
+from Models import REQ_CODE, Header
+from Controller import Controller
+
+HEADER_SIZE = 5
+
 
 
 HOST = "127.0.0.1"  
@@ -17,8 +22,9 @@ class Server:
         try:
             PORT = self.__get_port_from_file()
             db = Database()
-            self.services = Services(db)
-            self.router = Router()
+            services = Services(db)
+            self.controller = Controller(services)
+            
             if test:
                 return 
             self.__connection = Connection(PORT)
@@ -63,7 +69,7 @@ class Server:
         if mask & selectors.EVENT_READ:
             recv_data = socket.recv(MESSAGE_SIZE)
             if recv_data:
-                self.router.prase_data(recv_data)
+                data.outb = self.handle_request(recv_data)
             # else:
                 # print(f"Closing connection to {data.addr}")
                 # self.__connection.selector.unregister(socket)
@@ -74,6 +80,28 @@ class Server:
                 sent = socket.send(data.outb)  # Should be ready to write
                 data.outb = data.outb[sent:]
 
+    
+    def handle_request(self,data):
+        header = Header(data)
+        if header.code == REQ_CODE.REGISTER.value:
+            format = "<s"
+            user_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)
+            res = self.controller.register(user_name)
+            
+        elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
+            pass
+        elif header.code == REQ_CODE.SEND_FILE.value:
+            pass
+        elif header.code == REQ_CODE.CRC_FAILED.value:
+            pass
+        elif header.code == REQ_CODE.CRC_INVALID.value:
+            pass
+        elif header.code == REQ_CODE.CRC_VALID.value:
+            pass
+        else:
+            raise Exception('Invalid code error')
+        pass
+
 class Connection:
     def __init__(self,PORT):
         self.selector = selectors.DefaultSelector()
@@ -83,3 +111,5 @@ class Connection:
         print(f"server is listening on port {PORT}")
         self.__server_socket.setblocking(False)
         self.selector.register(self.__server_socket, selectors.EVENT_READ, data=None)
+
+
