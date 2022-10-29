@@ -120,7 +120,8 @@ void Client::register_user()
     }
     else if (res_header.data.code == RES_CODE::REGISTER_FAILED)
     {
-        std::cout << "Register failed" << std::endl;
+        std::cout << "Failed to register new user:" << std::endl;
+        // TODO: add server error
     }
     else
     {
