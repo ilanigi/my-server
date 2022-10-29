@@ -5,10 +5,10 @@
 
 #pragma pack(push,1)
 struct req_header_model {
-    uint8_t cliend_id[CLIENT_ID_SIZE];
+    uint8_t client_id[CLIENT_ID_SIZE];
     uint8_t version;
     uint16_t code;
-    uint16_t payload_size;
+    uint32_t payload_size;
 };
 #pragma pack(pop)
 
@@ -24,11 +24,11 @@ enum REQ_CODE {
     SEND_FILE = 1103,
     CRC_VALID = 1104,
     CRC_INVALID = 1105,
-    CRC_FALIED = 1106
+    CRC_FAILED = 1106
 };
 
 enum REQ_PAYLOAD_SIZE {
-    REGISTER_S = 255,
+    // REGISTER_S = 255,
     SEND_PUBLIC_KEY_S = 415,
     SEND_FILE_S = 275
 };
@@ -37,7 +37,7 @@ enum REQ_PAYLOAD_SIZE {
 struct res_header_model {
     uint8_t version;
     uint16_t code;
-    uint16_t payload_size;
+    uint32_t payload_size;
 };
 #pragma pack(pop)
 
