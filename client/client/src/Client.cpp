@@ -96,4 +96,22 @@ void Client::register_user()
     }
 
     boost::asio::write(client_socket, boost::asio::buffer(req,req_size));
+
+    res_header res_header = {0};
+    char user_id_buff[USER_ID_SIZE + 1] = {0};
+
+    size_t length = boost::asio::read(client_socket, boost::asio::buffer(res_header.buff, sizeof(res_header))); 
+    if(res_header.data.code == RES_CODE::SUCCESSFUL_REGISTER ){   
+    length = boost::asio::read(client_socket, boost::asio::buffer(user_id_buff, USER_ID_SIZE)); 
+    std::string user_id(user_id_buff);
+
+    std::ofstream outfile ("me.info");
+    outfile << user_name << std::endl;
+    outfile << user_id << std::endl;
+    outfile.close();    
+    } else if(res_header.data.code == RES_CODE::REGISTER_FAILED){
+        std::cout << "Register failed" << std::endl;
+    } else {
+        std::cout << "General error accrued" << std::endl;
+    }
 }
