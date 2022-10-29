@@ -74,15 +74,17 @@ void Client::register_user()
     std::cout << "Register user" << std::endl;
 
     std::string user_name = this->get_user_name_from_file();
-    res_header header = { 0 };
+    req_header header = { 0 };
     header.data.code = REQ_CODE::REGISTER;
     header.data.version = CLIENT_VERSION;
-    header.data.payload_size = REQ_PAYLOAD_SIZE::REGISTER_S;
+    header.data.payload_size = user_name.length();
 
-    char req[REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)] = { 0 };
+    std::size_t req_size = user_name.length() + sizeof(req_header);
+    
+    char req[req_size] = { 0 };
     int i = 0
         ;
-    while (i < sizeof(res_header))
+    while (i < sizeof(req_header))
     {
         req[i] = header.buff[i];
         i++;
@@ -93,5 +95,5 @@ void Client::register_user()
         req[i++] = letter;
     }
 
-    boost::asio::write(client_socket, boost::asio::buffer(req, REQ_PAYLOAD_SIZE::REGISTER_S + sizeof(res_header)));
+    boost::asio::write(client_socket, boost::asio::buffer(req,req_size));
 }
