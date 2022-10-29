@@ -6,11 +6,8 @@ from Services import Services
 from Database import Database
 from struct import unpack_from
 
-from Models import REQ_CODE, Header
+from Models import HEADER_SIZE, REQ_CODE, Request_Header
 from Controller import Controller
-
-HEADER_SIZE = 5
-
 
 
 HOST = "127.0.0.1"  
@@ -82,10 +79,10 @@ class Server:
 
     
     def handle_request(self,data):
-        header = Header(data)
+        header = Request_Header(data)
         if header.code == REQ_CODE.REGISTER.value:
-            format = "<s"
-            user_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)
+            format = f'<{header.payload_size}s'
+            user_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0].decode('utf-8')
             res = self.controller.register(user_name)
             
         elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
@@ -100,7 +97,7 @@ class Server:
             pass
         else:
             raise Exception('Invalid code error')
-        pass
+        return res
 
 class Connection:
     def __init__(self,PORT):
@@ -111,5 +108,3 @@ class Connection:
         print(f"server is listening on port {PORT}")
         self.__server_socket.setblocking(False)
         self.selector.register(self.__server_socket, selectors.EVENT_READ, data=None)
-
-
