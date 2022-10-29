@@ -2,7 +2,9 @@ from enum import Enum
 from struct import unpack_from, pack
 
 REQ_HEADER_FORMAT = "<16pBHI"
-RES_HEADER_FORMAT = "<BHI"
+RES_FORMAT_BASE = "<BHI"
+VERSION = 3
+HEADER_SIZE = 23
 
 class REQ_CODE(Enum):
     REGISTER = 1100
@@ -13,15 +15,15 @@ class REQ_CODE(Enum):
     CRC_FAILED = 110
 
 class RES_CODE(Enum):
-        REGISTER_ACC = 2100
-        REGISTER_FAILED = 2101
-        PUBLIC_KEY_ACC = 2102
-        FILE_ACC = 2103
-        MESSAGE_ACC = 2104
+    REGISTER_FAILED = 2101
+    ACC_REGISTER = 2100
+    ACC_PUBLIC_KEY = 2102
+    ACC_FILE = 2103
+    ACC_MESSAGE = 2104
 
 
 
-class Header:
+class Request_Header:
     def __init__(self,data ) -> None:
         user_id, version, code, payload_size = unpack_from(REQ_HEADER_FORMAT,buffer=data,offset=0)
         self.user_id = user_id.decode("utf-8") 
@@ -30,11 +32,23 @@ class Header:
         self.payload_size = payload_size
 
 
+# class Response_header:
+#     def __init__(self, , payload_size = 0) -> None:
+#         self.version = version
+#         self.code = code
+#         self.payload_size = payload_size
+
 class Response:
-    def __init__(self, version, code:RES_CODE, payload_size) -> None:
-        self.version = version
-        self.code = code
-        self.payload_size = payload_size
-        self.compiled = pack(RES_HEADER_FORMAT,version, code, payload_size)
+    def __init__(self, code:RES_CODE, payload) -> None:
+        
+        RES_FORMAT = RES_FORMAT_BASE
+        payload_size = 0
+        
+        if type(payload) == str:
+            RES_FORMAT += f'{len(payload)}s'
+            payload_size = len(payload)
+            payload = bytes(payload ,'utf-8')
+
+        self.compiled = pack(RES_FORMAT,VERSION, code, payload_size, payload)
 
 
