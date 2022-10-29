@@ -6,9 +6,9 @@ class Controller:
         self.services = services
         pass
 
-    def register(self,userId:str):
-        if self.services.users.user_exist(userId):
+    def register(self,user_name:str):
+        if self.services.users.user_exist(user_name):
             raise Exception('user is already exist')
             
-        self.services.users.save_user_to_db(userId)
-        return b'200'
+        user_id = self.services.users.save_user_to_db(user_name)
+        return self.services.send.ok.register(user_id)
