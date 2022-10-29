@@ -8,23 +8,22 @@ from struct import unpack_from
 
 from Models import HEADER_SIZE, REQ_CODE, Request_Header
 from Controller import Controller
+from Connection import Connection
 
 
-HOST = "127.0.0.1"  
 MESSAGE_SIZE = 1024
 TIMEOUT = 0
 
 class Server:
     def __init__(self,test=False):
         try:
-            PORT = self.__get_port_from_file()
             db = Database()
             services = Services(db)
             self.controller = Controller(services)
             
             if test:
                 return 
-            self.__connection = Connection(PORT)
+            self.__connection = Connection()
             self.__listen()
 
         except Exception as error:
@@ -33,15 +32,6 @@ class Server:
         finally:
             if not test:
                 self.__connection.selector.close()
-    
-    def __get_port_from_file(self):
-        try:
-            port_file = open("server/port.info", "r")
-            PORT = int(port_file.readline())
-            port_file.close()
-        except FileNotFoundError:
-            raise Exception('port file not found')
-        return PORT
 
     def __listen(self):
         while True:
@@ -99,12 +89,3 @@ class Server:
             raise Exception('Invalid code error')
         return res
 
-class Connection:
-    def __init__(self,PORT):
-        self.selector = selectors.DefaultSelector()
-        self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__server_socket.bind((HOST, PORT))
-        self.__server_socket.listen()
-        print(f"server is listening on port {PORT}")
-        self.__server_socket.setblocking(False)
-        self.selector.register(self.__server_socket, selectors.EVENT_READ, data=None)
