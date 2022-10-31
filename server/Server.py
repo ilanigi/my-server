@@ -1,6 +1,5 @@
 import selectors
 import types    
-import socket
 
 from Services import Services
 from Database import Database
