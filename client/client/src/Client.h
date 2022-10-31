@@ -8,7 +8,7 @@ public:
     Client();
     ~Client();
     void register_user();
-    /*const boost::asio::ip::tcp::socket& get_socket();*/
+    void create_RSA_keys();
 
 private:    
     boost::asio::io_context client_io_context;

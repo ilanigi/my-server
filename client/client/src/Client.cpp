@@ -5,6 +5,7 @@
 #include <string>
 #include <stdexcept>
 #include <boost/asio.hpp>
+#include <crypto++/rsa.h>
 #include <fstream>
 #include <iostream>
 
@@ -24,7 +25,7 @@ Client::Client() : client_socket(client_io_context)
     }
 
     std::cout << "Server is connected." << std::endl;
-}
+}   
 
 Client::~Client()
 {
@@ -80,7 +81,7 @@ void Client::register_user()
     }
 
     std::cout << "Register user" << std::endl;
-
+//TODO: add check  - max user name size is 255 chars
     std::string user_name = this->get_user_name_from_file();
     req_header header = {0};
     header.data.code = REQ_CODE::REGISTER;
@@ -121,10 +122,24 @@ void Client::register_user()
     else if (res_header.data.code == RES_CODE::REGISTER_FAILED)
     {
         std::cout << "Failed to register new user:" << std::endl;
-        // TODO: add server error
+        // TODO: create retry system , add first error: 'server responded with an error' and after 3 tries full error
     }
     else
     {
         std::cout << "General error accrued" << std::endl;
     }
+    
+}
+
+void Client::create_RSA_keys(){
+
+    CryptoPP::RandomNumberGenerator rng;
+    CryptoPP::InvertibleRSAFunction params;
+    // params.GenerateRandomWithKeySize(rng, 1024);
+    // CryptoPP::RSA::PrivateKey privateKey(params);
+    // CryptoPP::RSA::PublicKey publicKey(params);
+
+    // std::cout << "General error accrued" << std::endl;
+
+
 }
