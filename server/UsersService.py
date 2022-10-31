@@ -6,9 +6,22 @@ class Users:
     def __init__(self, db:Database):
         self.db = db
 
-    def user_exist(self, user_name:str):
+    def user_exist_by_name(self, user_name:str):
         # TODO: add check by the book
         res = self.db.users.read(["name"],[user_name])
+        
+        user_exist = not res is None 
+        
+        if user_exist:
+            user_id = res[0]
+            now = str(datetime.now())
+            self.db.users.update((["id"], [user_id]),(["lastSeen"],[now]))
+       
+        return user_exist
+
+    def user_exist_by_id(self, user_id:str):
+        # TODO: add check by the book
+        res = self.db.users.read(["id"],[user_id])
         
         user_exist = not res is None 
         
