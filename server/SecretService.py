@@ -9,6 +9,9 @@ class SecretService:
         AESkey = AES.new(public_key, AES.MODE_EAX)
         return AESkey
     
+    def encrypt_AES_key(self, AES_key, pub):
+        pass
+
     def decrypt_file(AESkey, file):
         file = AESkey.decrypt(file)
         return file
