@@ -1,5 +1,5 @@
 import selectors
-from socket import socket
+import socket
 
 HOST = "127.0.0.1"  
 DEFAULT_PORT = 1234
