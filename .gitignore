@@ -20,3 +20,6 @@ client/client/src/Client
 client/client/src/main
 client/client/src/transfer.info
 client/.vscode/settings.json
+.vs/
+
+client/client/bin/
