@@ -5,9 +5,10 @@
 #include <string>
 #include <stdexcept>
 #include <boost/asio.hpp>
-#include <crypto++/rsa.h>
 #include <fstream>
 #include <iostream>
+#include <osrng.h>
+#include <rsa.h>
 
 Client::Client() : client_socket(client_io_context)
 {
@@ -90,7 +91,8 @@ void Client::register_user()
 
     std::size_t req_size = user_name.length() + sizeof(req_header);
 
-    char req[req_size] = { 0 };
+    char * req = new char[req_size]();
+
     int i = 0;
     while (i < sizeof(req_header))
     {
@@ -135,11 +137,9 @@ void Client::create_RSA_keys() {
 
     CryptoPP::RandomNumberGenerator rng;
     CryptoPP::InvertibleRSAFunction params;
-    // params.GenerateRandomWithKeySize(rng, 1024);
-    // CryptoPP::RSA::PrivateKey privateKey(params);
-    // CryptoPP::RSA::PublicKey publicKey(params);
+    params.GenerateRandomWithKeySize(rng, 1024);
 
-    // std::cout << "General error accrued" << std::endl;
-
-
+    CryptoPP::RSA::PrivateKey privateKey(params);
+    CryptoPP::RSA::PublicKey publicKey(params);
+ 
 }
