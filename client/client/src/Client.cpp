@@ -17,7 +17,7 @@ Client::Client() : client_socket(client_io_context)
         boost::asio::ip::tcp::resolver resolver(client_io_context);
         boost::asio::connect(client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));
     }
-    catch (const std::exception &e)
+    catch (const std::exception& e)
     {
         std::cerr << "Failed connect to serve:" << '\n';
         std::cerr << e.what() << '\n';
@@ -25,7 +25,7 @@ Client::Client() : client_socket(client_io_context)
     }
 
     std::cout << "Server is connected." << std::endl;
-}   
+}
 
 Client::~Client()
 {
@@ -48,7 +48,7 @@ std::vector<std::string> Client::get_connection_credentials()
     {
         throw std::invalid_argument("transfer.info file is missing port or address");
     }
-    std::vector<std::string> to_ret{address, port};
+    std::vector<std::string> to_ret{ address, port };
     return to_ret;
 }
 
@@ -81,16 +81,16 @@ void Client::register_user()
     }
 
     std::cout << "Register user" << std::endl;
-//TODO: add check  - max user name size is 255 chars
+    //TODO: add check  - max user name size is 255 chars
     std::string user_name = this->get_user_name_from_file();
-    req_header header = {0};
+    req_header header = { 0 };
     header.data.code = REQ_CODE::REGISTER;
     header.data.version = CLIENT_VERSION;
     header.data.payload_size = user_name.length();
 
     std::size_t req_size = user_name.length() + sizeof(req_header);
 
-    char req[req_size] = {0};
+    char req[req_size] = { 0 };
     int i = 0;
     while (i < sizeof(req_header))
     {
@@ -105,8 +105,8 @@ void Client::register_user()
 
     boost::asio::write(client_socket, boost::asio::buffer(req, req_size));
 
-    res_header res_header = {0};
-    char user_id_buff[USER_ID_SIZE + 1] = {0};
+    res_header res_header = { 0 };
+    char user_id_buff[USER_ID_SIZE + 1] = { 0 };
 
     size_t length = boost::asio::read(client_socket, boost::asio::buffer(res_header.buff, sizeof(res_header)));
     if (res_header.data.code == RES_CODE::SUCCESSFUL_REGISTER)
@@ -128,10 +128,10 @@ void Client::register_user()
     {
         std::cout << "General error accrued" << std::endl;
     }
-    
+
 }
 
-void Client::create_RSA_keys(){
+void Client::create_RSA_keys() {
 
     CryptoPP::RandomNumberGenerator rng;
     CryptoPP::InvertibleRSAFunction params;

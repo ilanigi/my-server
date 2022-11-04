@@ -10,7 +10,7 @@ public:
     void register_user();
     void create_RSA_keys();
 
-private:    
+private:
     boost::asio::io_context client_io_context;
     boost::asio::ip::tcp::socket client_socket;
     static std::vector<std::string> get_connection_credentials();
