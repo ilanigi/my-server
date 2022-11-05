@@ -13,6 +13,9 @@ class OK:
     def register(self, user_id: str):
         res = Response(RES_CODE.ACC_REGISTER.value, user_id)
         return res.compiled
-
+        
+    def send_public_key(self, encrypt_public_key):
+        res = Response(RES_CODE.ACC_PUBLIC_KEY.value, encrypt_public_key)
+        return res.compiled
 
     
