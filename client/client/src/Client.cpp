@@ -1,5 +1,8 @@
 #include "Client.h"
 #include "models.h"
+#include "Secret_service.h"
+#include "File_service.h"
+
 
 #include <vector>
 #include <string>
@@ -7,14 +10,12 @@
 #include <boost/asio.hpp>
 #include <fstream>
 #include <iostream>
-#include <osrng.h>
-#include <rsa.h>
 
 Client::Client() : client_socket(client_io_context)
 {
     try
     {
-        std::vector<std::string> connection_credentials = this->get_connection_credentials();
+        std::vector<std::string> connection_credentials = File_service::get_connection_credentials();
         boost::asio::ip::tcp::resolver resolver(client_io_context);
         boost::asio::connect(client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));
     }
@@ -34,48 +35,10 @@ Client::~Client()
     std::cout << "Server is disconnected." << std::endl;
 }
 
-std::vector<std::string> Client::get_connection_credentials()
-{
-    std::string address;
-    std::string port;
-
-    std::ifstream transfer_file(TRANSFER_FILE);
-    // bool a = transfer_file.good();
-    getline(transfer_file, address, ':');
-    getline(transfer_file, port, '\n');
-    transfer_file.close();
-
-    if (port.length() < 1 || address.length() < 1)
-    {
-        throw std::invalid_argument("transfer.info file is missing port or address");
-    }
-    std::vector<std::string> to_ret{ address, port };
-    return to_ret;
-}
-
-bool Client::user_file_exist()
-{
-    std::string info_file_name = "me.info";
-    std::ifstream info_file(info_file_name);
-    return info_file.good();
-}
-
-std::string Client::get_user_name_from_file()
-{
-    std::string buff;
-    std::string user_name;
-
-    std::ifstream transfer_file(TRANSFER_FILE);
-    getline(transfer_file, buff, '\n');
-    getline(transfer_file, user_name, '\n');
-
-    buff.clear();
-    return user_name;
-}
 
 void Client::register_user()
 {
-    if (this->user_file_exist())
+    if (File_service::file_exist(USER_FILE))
     {
         std::cout << "User credentials already exist." << std::endl;
         return;
@@ -83,7 +46,7 @@ void Client::register_user()
 
     std::cout << "Register user" << std::endl;
     //TODO: add check  - max user name size is 255 chars
-    std::string user_name = this->get_user_name_from_file();
+    user_name = get_user_name_from_file();
     req_header header = { 0 };
     header.data.code = REQ_CODE::REGISTER;
     header.data.version = CLIENT_VERSION;
@@ -116,7 +79,7 @@ void Client::register_user()
         length = boost::asio::read(client_socket, boost::asio::buffer(user_id_buff, USER_ID_SIZE));
         std::string user_id(user_id_buff);
 
-        std::ofstream outfile("me.info");
+        std::ofstream outfile("USER_FILE ");
         outfile << user_name << std::endl;
         outfile << user_id << std::endl;
         outfile.close();
@@ -135,11 +98,49 @@ void Client::register_user()
 
 void Client::create_RSA_keys() {
 
-    CryptoPP::RandomNumberGenerator rng;
+    /*CryptoPP::RandomNumberGenerator rng;
     CryptoPP::InvertibleRSAFunction params;
     params.GenerateRandomWithKeySize(rng, 1024);
 
     CryptoPP::RSA::PrivateKey privateKey(params);
-    CryptoPP::RSA::PublicKey publicKey(params);
+    CryptoPP::RSA::PublicKey publicKey(params);*/
+
+    Secret_service secret;
+
+    secret.
+
+    
+
+    ////////////////////////////////////////////////////////////////////////////////////
+
+    /*CryptoPP::DSA::PrivateKey dsaPrivate;
+    dsaPrivate.GenerateRandomWithKeySize(prng, 1024);
+
+    CryptoPP::DSA::PublicKey dsaPublic;
+    dsaPrivate.MakePublicKey(dsaPublic);
+
+    SavePrivateKey("dsa-private.key", dsaPrivate);
+    SavePublicKey("dsa-public.key", dsaPublic);*/
+
+
+    req_header header = { 0 };
+
+    header.data.code = REQ_CODE::SEND_PUBLIC_KEY;
+    header.data.version = CLIENT_VERSION;
+    //header.data.payload_size = sizeof(publicKey);
+
+    std::size_t req_size = user_name.length() + sizeof(req_header);
+
+    char* req = new char[req_size]();
+
+    int i = 0;
+    while (i < sizeof(req_header))
+    {
+        req[i] = header.buff[i];
+        i++;
+    }
+
+
+    
  
 }
