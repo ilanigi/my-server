@@ -37,13 +37,16 @@ void Secret_service::decode_key(std::string base_64_key) {
 
 
 
-std::string Secret_service::get_public_key() const {
+
+
+char* Secret_service::get_public_key(char* buffer, unsigned int size) const
+{
 	CryptoPP::RSAFunction publicKey(private_key);
-	std::string key;
-	CryptoPP::StringSink ss(key);
-	publicKey.Save(ss);
-	return key;
+	CryptoPP::ArraySink as(reinterpret_cast<CryptoPP::byte*>(buffer), size);
+	publicKey.Save(as);
+	return buffer;
 }
+
 
 std::string Secret_service::get_private_key() const {
 	std::string key;
