@@ -1,7 +1,7 @@
 from enum import Enum
 from struct import unpack_from, pack
 
-REQ_HEADER_FORMAT = "<16pBHI"
+REQ_HEADER_FORMAT = "<16sBHI"
 RES_FORMAT_BASE = "<BHI"
 VERSION = 3
 HEADER_SIZE = 23
@@ -24,9 +24,9 @@ class RES_CODE(Enum):
 
 
 class Request_Header:
-    def __init__(self,data ) -> None:
-        user_id, version, code, payload_size = unpack_from(REQ_HEADER_FORMAT,buffer=data,offset=0)
-        self.user_id = user_id.decode("utf-8") 
+    def __init__(self,buffer ) -> None:
+        user_id, version, code, payload_size = unpack_from(REQ_HEADER_FORMAT,buffer=buffer,offset=0)
+        self.user_id = user_id
         self.version = version
         self.code = code
         self.payload_size = payload_size
