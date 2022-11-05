@@ -39,7 +39,7 @@ class Users:
         return res[0]
 
     def save_user_to_db(self, user_name:str):
-        user_id = str(uuid.uuid4())
+        user_id = uuid.uuid4().bytes_le
         now = str(datetime.now())
 
         self.db.users.create(["id", "name", "lastSeen"], [user_id, user_name, now])
