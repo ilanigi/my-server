@@ -5,12 +5,15 @@ class SecretService:
     def __init__(self) -> None:
         pass
 
-    def create_AES_key(public_key:str):
-        AESkey = AES.new(public_key, AES.MODE_EAX)
+    def create_AES_key(self):
+        AESkey = AES.new( AES.MODE_EAX)
         return AESkey
     
-    def encrypt_AES_key(self, AES_key, pub):
-        pass
+    def encrypt_AES_key(self, AES_key, public_key):
+        cipher = AES.new(AES_key, AES.MODE_EAX)
+        _ = cipher.nonce
+        encrypt_public_key, tag = cipher.decrypt_and_verify(public_key)
+        return encrypt_public_key
 
     def decrypt_file(AESkey, file):
         file = AESkey.decrypt(file)
