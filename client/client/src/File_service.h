@@ -12,6 +12,6 @@ static  std::vector<std::string> get_connection_credentials();
 static  std::string get_user_name_from_file();
 static  std::string get_private_key();
 static void add_line_to_file(std::string file_name, std::string line);
-static  std::string get_client_id();
+static std::vector<char> get_client_id();
 
 };

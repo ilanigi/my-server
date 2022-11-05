@@ -1,4 +1,7 @@
 #include"File_service.h"
+#include "Converters.h"
+#include "models.h"
+
 #include <ios>
 #include <fstream>
 #include <string>
@@ -43,16 +46,20 @@ std::string File_service::get_user_name_from_file()
     return user_name;
 }
 
- std::string File_service::get_client_id() {
+std::vector<char>  File_service::get_client_id() {
     std::string buff;
-    std::string client_id;
+    std::string hex_client_id;
 
     std::ifstream transfer_file(USER_FILE);
     getline(transfer_file, buff, '\n');
-    getline(transfer_file, client_id, '\n');
+    getline(transfer_file, hex_client_id, '\n');
+
 
     buff.clear();
-    return client_id;
+    std::vector<char> bytes_client_id = hex_to_bytes(hex_client_id);
+
+    return bytes_client_id
+
 }
 
 std::string File_service::get_private_key() {
