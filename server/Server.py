@@ -12,6 +12,7 @@ from Connection import Connection
 
 MESSAGE_SIZE = 1024
 TIMEOUT = 0
+CLIENT_ID_SIZE = 16
 
 class Server:
     def __init__(self,test=False):
@@ -75,6 +76,9 @@ class Server:
             res = self.controller.register(user_name)
             
         elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
+
+            public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0].decode('utf-8')
+            self.controller.send_key()
             pass
         elif header.code == REQ_CODE.SEND_FILE.value:
             pass
