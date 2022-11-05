@@ -1,5 +1,5 @@
 #include"File_service.h"
-
+#include <ios>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -56,4 +56,11 @@ std::string File_service::get_private_key() {
 
     return key;
 }
+
+void File_service::add_line_to_file(std::string file_name, std::string line) {
+    std::ofstream file(file_name, std::ios_base::app | std::ios_base::out);
+    file << line<< std::endl;;
+    file.close();
+}
+
 
