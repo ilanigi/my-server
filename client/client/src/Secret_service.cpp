@@ -1,7 +1,6 @@
 #include "Secret_service.h"
 #include "File_service.h"
-#include "Base_64_Service.h"
-
+#include "Converters.h"
 
 Secret_service::Secret_service() {
 	std::string base_64_private_key;
