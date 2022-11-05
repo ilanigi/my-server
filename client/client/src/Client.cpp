@@ -46,7 +46,7 @@ void Client::register_user()
 
     std::cout << "Register user" << std::endl;
     //TODO: add check  - max user name size is 255 chars
-    user_name = get_user_name_from_file();
+    user_name = File_service::get_user_name_from_file();
     req_header header = { 0 };
     header.data.code = REQ_CODE::REGISTER;
     header.data.version = CLIENT_VERSION;
@@ -79,10 +79,8 @@ void Client::register_user()
         length = boost::asio::read(client_socket, boost::asio::buffer(user_id_buff, USER_ID_SIZE));
         std::string user_id(user_id_buff);
 
-        std::ofstream outfile("USER_FILE ");
-        outfile << user_name << std::endl;
-        outfile << user_id << std::endl;
-        outfile.close();
+        File_service::add_line_to_file(USER_FILE, user_name);
+        File_service::add_line_to_file(USER_FILE, user_id);
     }
     else if (res_header.data.code == RES_CODE::REGISTER_FAILED)
     {
