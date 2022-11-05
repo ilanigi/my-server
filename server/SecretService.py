@@ -1,5 +1,5 @@
 from Crypto.Cipher import AES
-from crc import CrcCalculator, Crc32
+# from crc import CrcCalculator, Crc32
 
 class SecretService:
     def __init__(self) -> None:
@@ -17,6 +17,7 @@ class SecretService:
         return file
 
     def check_sum(file):
-        crc_calculator = CrcCalculator(Crc32.CRC32)
-        checksum = crc_calculator.calculate_checksum(file)
-        return checksum
+        # crc_calculator = CrcCalculator(Crc32.CRC32)
+        # checksum = crc_calculator.calculate_checksum(file)
+        # return checksum
+        pass
