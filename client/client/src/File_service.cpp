@@ -43,6 +43,18 @@ std::string File_service::get_user_name_from_file()
     return user_name;
 }
 
+ std::string File_service::get_client_id() {
+    std::string buff;
+    std::string client_id;
+
+    std::ifstream transfer_file(USER_FILE);
+    getline(transfer_file, buff, '\n');
+    getline(transfer_file, client_id, '\n');
+
+    buff.clear();
+    return client_id;
+}
+
 std::string File_service::get_private_key() {
 
     std::string buff;
@@ -59,7 +71,7 @@ std::string File_service::get_private_key() {
 
 void File_service::add_line_to_file(std::string file_name, std::string line) {
     std::ofstream file(file_name, std::ios_base::app | std::ios_base::out);
-    file << line<< std::endl;;
+    file << line << std::endl;;
     file.close();
 }
 
