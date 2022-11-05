@@ -109,12 +109,12 @@ void Client::create_RSA_keys() {
     header.data.payload_size = KEY_SIZE_NET;
     
     std::vector<char> client_id = File_service::get_client_id();
-
+    
     int i = 0;
 
     for (auto letter : client_id) {
-
-        header.data.client_id[i++] = letter;
+        header.data.client_id[i] = letter;
+        i++;
     }
 
     std::size_t req_size = KEY_SIZE_NET + sizeof(req_header);
