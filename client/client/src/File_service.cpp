@@ -58,7 +58,7 @@ std::vector<char>  File_service::get_client_id() {
     buff.clear();
     std::vector<char> bytes_client_id = hex_to_bytes(hex_client_id);
 
-    return bytes_client_id
+    return bytes_client_id;
 
 }
 
