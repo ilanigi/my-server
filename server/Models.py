@@ -42,12 +42,17 @@ class Response:
     def __init__(self, code:RES_CODE, payload) -> None:
         
         RES_FORMAT = RES_FORMAT_BASE
-        payload_size = 0
+        
         
         if type(payload) == str:
             RES_FORMAT += f'{len(payload)}s'
             payload_size = len(payload)
             payload = bytes(payload ,'utf-8')
+
+        if type(payload) == bytes:
+            RES_FORMAT += f'{len(payload)}s'
+            payload_size = len(payload)
+
 
         self.compiled = pack(RES_FORMAT,VERSION, code, payload_size, payload)
 
