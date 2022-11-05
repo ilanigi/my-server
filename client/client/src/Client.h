@@ -13,7 +13,6 @@ private:
     std::string user_name;
     boost::asio::io_context client_io_context;
     boost::asio::ip::tcp::socket client_socket;
-    std::string get_user_name_from_file();
 };
 
 
