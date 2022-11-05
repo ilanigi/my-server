@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 from Database import Database
 
@@ -38,15 +37,12 @@ class Users:
             raise Exception("user not found")
         return res[0]
 
-    def save_user_to_db(self, user_name:str):
-        user_id = uuid.uuid4().bytes_le
+    def save_user_to_db(self, user_name:str, user_id:bytes):
         now = str(datetime.now())
-
         self.db.users.create(["id", "name", "lastSeen"], [user_id, user_name, now])
-        return user_id
 
-    def add_public_key(self, user_name:str,public_key:str ):    
-        self.db.users.update((["name"],[user_name]),(["publicKey"],[public_key]))
+    def add_public_key(self, user_id:str,public_key:str ):    
+        self.db.users.update((["id"],[user_id]),(["publicKey"],[public_key]))
     
     def add_AES_key(self,user_id:str,AESkey:str):
         self.db.users.update((["id"],[user_id]),(["AESKey"],[AESkey]))
