@@ -1,22 +1,22 @@
 #include "Secret_service.h"
 #include "File_service.h"
+#include "Base_64_Service.h"
 
 
 Secret_service::Secret_service() {
-	std::string string_private_key;
+	std::string base_64_private_key;
 	if (File_service::file_exist(USER_FILE)) {
-		string_private_key = get_private_key();
-		if (string_private_key.length() > 0) {
-			std::cout << "private key found in  me.info file." << std::endl;
-			// private key exist - modify from 64base to object.
+		base_64_private_key = File_service::get_private_key();
+		if (base_64_private_key.length() > 0) {
+			std::cout << "private key found in me.info file." << std::endl;
+			decode_key(base_64_private_key);
 		}
 		else {
 			// create and add to me.info
 			std::cout << "crating private key" << std::endl;
 			private_key.Initialize(rng, KEY_SIZE);
-
+			add_key_to_file();
 		}
-		return;
 	}
 	else {
 		std::cout << "User credentials  are not exist, please register before sending key." << std::endl;
@@ -25,7 +25,19 @@ Secret_service::Secret_service() {
 }
 Secret_service::~Secret_service() {};
 
-std::string Secret_service::get_public_key() {
+void Secret_service::add_key_to_file() {
+	std::string base_64_key = Base_64_service::encode(get_private_key());
+	File_service::add_line_to_file(USER_FILE, base_64_key);
+}
+void Secret_service::decode_key(std::string base_64_key) {
+	std::string key = Base_64_service::decode(base_64_key);
+	CryptoPP::StringSource ss(key, true);
+	private_key.Load(ss);
+}
+
+
+
+std::string Secret_service::get_public_key() const {
 	CryptoPP::RSAFunction publicKey(private_key);
 	std::string key;
 	CryptoPP::StringSink ss(key);
@@ -33,7 +45,7 @@ std::string Secret_service::get_public_key() {
 	return key;
 }
 
-std::string Secret_service::get_private_key() {
+std::string Secret_service::get_private_key() const {
 	std::string key;
 	CryptoPP::StringSink ss(key);
 	private_key.Save(ss);
