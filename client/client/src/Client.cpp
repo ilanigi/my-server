@@ -2,7 +2,7 @@
 #include "models.h"
 #include "Secret_service.h"
 #include "File_service.h"
-
+#include "Converters.h"
 
 #include <vector>
 #include <string>
@@ -72,13 +72,13 @@ void Client::register_user()
     boost::asio::write(client_socket, boost::asio::buffer(req, req_size));
 
     res_header res_header = { 0 };
-    char user_id_buff[USER_ID_SIZE + 1] = { 0 };
+    uint8_t user_id_buff[CLIENT_ID_SIZE] = { 0 };
 
     size_t length = boost::asio::read(client_socket, boost::asio::buffer(res_header.buff, sizeof(res_header)));
     if (res_header.data.code == RES_CODE::SUCCESSFUL_REGISTER)
     {
-        length = boost::asio::read(client_socket, boost::asio::buffer(user_id_buff, USER_ID_SIZE));
-        std::string user_id(user_id_buff);
+        length = boost::asio::read(client_socket, boost::asio::buffer(user_id_buff, CLIENT_ID_SIZE));
+        std::string user_id = bytes_to_hex(user_id_buff, CLIENT_ID_SIZE);
 
         File_service::add_line_to_file(USER_FILE, user_name);
         File_service::add_line_to_file(USER_FILE, user_id);
@@ -108,7 +108,8 @@ void Client::create_RSA_keys() {
     header.data.version = CLIENT_VERSION;
     header.data.payload_size = KEY_SIZE_NET;
     
-    std::string client_id = File_service::get_client_id();
+    std::vector<char> client_id = File_service::get_client_id();
+
     int i = 0;
 
     for (auto letter : client_id) {
