@@ -1,7 +1,7 @@
 #include <rsa.h>
 #include <osrng.h> 
 #define KEY_SIZE 1024
-#define KEY_SIZE_NET 1024
+#define KEY_SIZE_NET 160
 
 class Secret_service {
 public: 
