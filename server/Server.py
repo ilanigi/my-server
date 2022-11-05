@@ -76,9 +76,9 @@ class Server:
             res = self.controller.register(user_name)
             
         elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
-
-            public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0].decode('utf-8')
-            self.controller.send_key()
+            format = f'<{header.payload_size}s'
+            public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0]
+            self.controller.send_key(header.user_id, public_key)
             pass
         elif header.code == REQ_CODE.SEND_FILE.value:
             pass
