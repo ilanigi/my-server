@@ -1,4 +1,5 @@
 from Services import Services
+import uuid
 
 
 class Controller:
@@ -10,8 +11,8 @@ class Controller:
         # TODO: add check  - max user name size is 255 chars
         if self.__services.users.user_exist_by_name(user_name):
             raise Exception('user is already exist')
-            
-        user_id = self.__services.users.save_user_to_db(user_name)
+        user_id = uuid.uuid4().bytes_le
+        self.__services.users.save_user_to_db(user_name,user_id)
         return self.__services.send.ok.register(user_id)
     
     def send_key(self,user_id, public_key):
@@ -19,7 +20,10 @@ class Controller:
             raise Exception('user not exist')
 
         self.__services.users.add_public_key(user_id,public_key)
-        AES_key = self.__services.secrets.create_AES_key()
+        AES_key = self.__services.secrets.create_AES_key(public_key)
+        self.__services.users.add_AES_key(user_id, AES_key)      
+        encrypt_public_key = self.__services.secrets.encrypt_AES_key(AES_key,public_key)
+        return self.__services.send.ok.
         
 
 
