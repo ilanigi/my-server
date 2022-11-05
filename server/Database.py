@@ -15,7 +15,7 @@ class Database:
         connection = sqlite3.connect(DB_FILE)
         curser = connection.cursor()
 
-        self.users = Table((connection, curser, db_exist), "clients", [("id", "VARCHAR PRIMARY KEY", str), (
+        self.users = Table((connection, curser, db_exist), "clients", [("id", "VARCHAR PRIMARY KEY", bytes), (
             "name", "VARCHAR UNIQUE", str), ("publicKey", "VARCHAR", str), ("lastSeen", "VARCHAR", str), ("AESKey", "VARCHAR", str)])\
 
         self.files = Table((connection, curser, db_exist), "files", [("id", "VARCHAR PRIMARY KEY", str), (
