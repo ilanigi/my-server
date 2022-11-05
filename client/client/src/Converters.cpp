@@ -4,15 +4,15 @@
 #include <sstream>
 #include <string>
 
-std::string hex_to_str(const uint8_t* data, int len)
+std::string bytes_to_hex(const uint8_t* data, int len)
 {
-	std::stringstream ss;
-	ss << std::hex;
+	std::stringstream stream;
+	stream << std::hex;
 
 	for (int i(0); i < len; ++i)
-		ss << std::setw(2) << std::setfill('0') << (int)data[i];
+		stream << std::setw(2) << std::setfill('0') << (int)data[i];
 
-	return ss.str();
+	return stream.str();
 }
 
 std::string Base_64_service::encode(const std::string& str)
@@ -37,4 +37,17 @@ std::string Base_64_service::decode(const std::string& str)
 	); 
 
 	return decoded;
+}
+
+
+std::vector<char> hex_to_bytes(const std::string& hex) {
+	std::vector<char> bytes;
+
+	for (unsigned int i = 0; i < hex.length(); i += 2) {
+		std::string byteString = hex.substr(i, 2);
+		char byte = (char)strtol(byteString.c_str(), NULL, 16);
+		bytes.push_back(byte);
+	}
+
+	return bytes;
 }
