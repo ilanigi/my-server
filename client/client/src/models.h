@@ -2,7 +2,7 @@
 
 #define CLIENT_ID_SIZE 16
 #define CLIENT_VERSION 3
-#define USER_ID_SIZE  36
+#define CLIENT_ID_STR_SIZE 32
 
 #pragma pack(push,1)
 struct req_header_model {
