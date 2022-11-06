@@ -19,6 +19,7 @@ class Server:
         try:
             db = Database()
             services = Services(db)
+            self.services = services 
             self.controller = Controller(services)
             
             if test:
@@ -69,26 +70,31 @@ class Server:
 
     
     def handle_request(self,data):
-        header = Request_Header(data)
-        if header.code == REQ_CODE.REGISTER.value:
-            format = f'<{header.payload_size}s'
-            user_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0].decode('utf-8')
-            res = self.controller.register(user_name)
+        try:
+            header = Request_Header(data)
+            if header.code == REQ_CODE.REGISTER.value:
+                format = f'<{header.payload_size}s'
+                user_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0].decode('utf-8')
+                res = self.controller.register(user_name)
+                
+            elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
+                format = f'<{header.payload_size}s'
+                public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0]
+                res = self.controller.send_key(header.user_id, public_key)
+
+            elif header.code == REQ_CODE.SEND_FILE.value:
+                pass
+            elif header.code == REQ_CODE.CRC_FAILED.value:
+                pass
+            elif header.code == REQ_CODE.CRC_INVALID.value:
+                pass
+            elif header.code == REQ_CODE.CRC_VALID.value:
+                pass
+            else:
+                raise Exception('Invalid code error')
+            return res
+        except Exception as error:
+            res = self.services.send.failed.general(error)
             
-        elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
-            format = f'<{header.payload_size}s'
-            public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0]
-            res = self.controller.send_key(header.user_id, public_key)
-            pass
-        elif header.code == REQ_CODE.SEND_FILE.value:
-            pass
-        elif header.code == REQ_CODE.CRC_FAILED.value:
-            pass
-        elif header.code == REQ_CODE.CRC_INVALID.value:
-            pass
-        elif header.code == REQ_CODE.CRC_VALID.value:
-            pass
-        else:
-            raise Exception('Invalid code error')
-        return res
+
 
