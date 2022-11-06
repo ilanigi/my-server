@@ -1,6 +1,7 @@
 #pragma once
 #include <boost/asio.hpp>
 #define AES_KEY_SIZE 16
+#define ENCRYPTED_AES_KEY_SIZE 128
 
 class Client {
 public:
