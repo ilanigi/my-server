@@ -20,10 +20,10 @@ class Controller:
             raise Exception('user not exist')
 
         self.__services.users.add_public_key(user_id,public_key)
-        AES_key = self.__services.secrets.create_AES_key(public_key)
+        AES_key = self.__services.secrets.create_AES_key()
         self.__services.users.add_AES_key(user_id, AES_key)      
         encrypt_public_key = self.__services.secrets.encrypt_AES_key(AES_key,public_key)
-        return self.__services.send.ok.
+        return self.__services.send.ok.send_public_key(encrypt_public_key)
         
 
 
