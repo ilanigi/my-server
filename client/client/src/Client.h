@@ -1,6 +1,6 @@
 #pragma once
 #include <boost/asio.hpp>
-
+#define AES_KEY_SIZE 16
 
 class Client {
 public:
@@ -8,6 +8,7 @@ public:
     ~Client();
     void register_user();
     void create_RSA_keys();
+    std::vector<char> AES_key;
 
 private:
     std::string user_name;

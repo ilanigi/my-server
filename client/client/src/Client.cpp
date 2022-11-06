@@ -136,13 +136,19 @@ void Client::create_RSA_keys() {
     boost::asio::write(client_socket, boost::asio::buffer(req, req_size));
 
     res_header res_header = { 0 };
+    char AES_key_buffer[AES_KEY_SIZE] = { 0 };
 
     size_t length = boost::asio::read(client_socket, boost::asio::buffer(res_header.buff, sizeof(res_header)));
     if (res_header.data.code == RES_CODE::PUBLIC_KEY_RECEIVED)
-    {
-        return;
-    }
+    {   
+        length = boost::asio::read(client_socket, boost::asio::buffer(AES_key_buffer, AES_KEY_SIZE));
+        for (auto letter : AES_key_buffer) {
+            AES_key.push_back(letter);
+        }
 
-    
+    }
+    else {
+        std::cout << "General error accrued" << std::endl;
+    }   
  
 }
