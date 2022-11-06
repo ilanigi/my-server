@@ -1,5 +1,6 @@
-from Crypto.Cipher import AES,PKCS1_OAEP
+from Crypto.Cipher import PKCS1_OAEP
 import os
+from Crypto.PublicKey.RSA import import_key
 # from crc import CrcCalculator, Crc32
 
 class SecretService:
@@ -10,7 +11,8 @@ class SecretService:
         return os.urandom(16)
     
     def encrypt_AES_key(self, AES_key, public_key):
-        cipher_rsa = PKCS1_OAEP.new(public_key)
+        compiled_public_key = import_key(import_key)
+        cipher_rsa = PKCS1_OAEP.new(compiled_public_key)
         encrypt_public_key = cipher_rsa.encrypt(AES_key)
         return encrypt_public_key
 
