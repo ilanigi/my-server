@@ -4,6 +4,7 @@
 
 Secret_service::Secret_service() {
 	std::string base_64_private_key;
+
 	if (File_service::file_exist(USER_FILE)) {
 		base_64_private_key = File_service::get_private_key();
 		if (base_64_private_key.length() > 0) {
@@ -53,7 +54,13 @@ std::string Secret_service::get_private_key() const {
 	private_key.Save(ss);
 	return key;
 }
+std::string Secret_service::decrypt(const char* cipher, unsigned int length) {
+	std::string decrypted;
 
-
-//rsaPrivate.GenerateRandomWithKeySize(prng, 1024);
+	CryptoPP::RSAES_OAEP_SHA_Decryptor decryptor(private_key);
+	CryptoPP::StringSource ss_cipher(reinterpret_cast<const CryptoPP::byte*>(cipher), length, true, 
+		new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::StringSink(decrypted)));
+	
+	return decrypted;
+}
 
