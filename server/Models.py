@@ -38,7 +38,7 @@ class Response:
         RES_FORMAT = RES_FORMAT_BASE
         
         
-        if type(payload) == str:
+        if type(payload) == str or type(payload) == Exception:
             RES_FORMAT += f'{len(payload)}s'
             payload_size = len(payload)
             payload = bytes(payload ,'utf-8')
