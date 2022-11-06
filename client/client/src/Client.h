@@ -8,7 +8,7 @@ public:
     ~Client();
     void register_user();
     void create_RSA_keys();
-    std::vector<char> AES_key;
+    std::string AES_key;
 
 private:
     std::string user_name;
