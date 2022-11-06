@@ -11,13 +11,13 @@ class SecretService:
         return os.urandom(16)
     
     def encrypt_AES_key(self, AES_key, public_key):
-        compiled_public_key = import_key(import_key)
+        compiled_public_key = import_key(public_key)
         cipher_rsa = PKCS1_OAEP.new(compiled_public_key)
-        encrypt_public_key = cipher_rsa.encrypt(AES_key)
-        return encrypt_public_key
+        encrypt_AES_key = cipher_rsa.encrypt(AES_key)
+        return encrypt_AES_key
 
     def decrypt_file(AESkey, file):
-         # cipher = AES.new(AES_key, AES.MODE_EAX)
+        # cipher = AES.new(AES_key, AES.MODE_EAX)
         # encrypt_public_key, _ = cipher.encrypt_and_digest(public_key)
         file = AESkey.decrypt(file)
         return file
