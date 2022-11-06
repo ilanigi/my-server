@@ -78,7 +78,7 @@ class Server:
         elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
             format = f'<{header.payload_size}s'
             public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0]
-            self.controller.send_key(header.user_id, public_key)
+            res = self.controller.send_key(header.user_id, public_key)
             pass
         elif header.code == REQ_CODE.SEND_FILE.value:
             pass
