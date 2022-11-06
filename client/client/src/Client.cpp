@@ -132,23 +132,23 @@ void Client::create_RSA_keys() {
     while (j < + KEY_SIZE_NET) {
         req[i++] = public_key_buff[j++];
     }
+    std::cout << "Sending public key.." << std::endl;
 
     boost::asio::write(client_socket, boost::asio::buffer(req, req_size));
 
     res_header res_header = { 0 };
-    char encrypet_AES_key_buffer[AES_KEY_SIZE] = { 0 };
+    char encrypet_AES_key_buffer[ENCRYPTED_AES_KEY_SIZE] = { 0 };
 
     size_t length = boost::asio::read(client_socket, boost::asio::buffer(res_header.buff, sizeof(res_header)));
     if (res_header.data.code == RES_CODE::PUBLIC_KEY_RECEIVED)
     {   
-        length = boost::asio::read(client_socket, boost::asio::buffer(encrypet_AES_key_buffer, AES_KEY_SIZE));
+        length = boost::asio::read(client_socket, boost::asio::buffer(
+            encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE));
         
-        AES_key = secret_service.decrypt(encrypet_AES_key_buffer, AES_KEY_SIZE);
-
-
+        AES_key = secret_service.decrypt(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);
+        std::cout << "AES key recived successfully" << std::endl;
     }
     else {
         std::cout << "General error accrued" << std::endl;
     }   
- 
 }
