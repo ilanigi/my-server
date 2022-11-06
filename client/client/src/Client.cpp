@@ -82,6 +82,8 @@ void Client::register_user()
 
         File_service::add_line_to_file(USER_FILE, user_name);
         File_service::add_line_to_file(USER_FILE, user_id);
+        std::cout << "User registered successully" << std::endl;
+
     }
     else if (res_header.data.code == RES_CODE::REGISTER_FAILED)
     {
@@ -118,7 +120,6 @@ void Client::create_RSA_keys() {
     }
 
     std::size_t req_size = KEY_SIZE_NET + sizeof(req_header);
-
     std::vector<char> req(req_size);
 
     i = 0;
@@ -132,7 +133,7 @@ void Client::create_RSA_keys() {
     while (j < + KEY_SIZE_NET) {
         req[i++] = public_key_buff[j++];
     }
-    std::cout << "Sending public key.." << std::endl;
+    std::cout << "Sending public key..." << std::endl;
 
     boost::asio::write(client_socket, boost::asio::buffer(req, req_size));
 
@@ -152,3 +153,5 @@ void Client::create_RSA_keys() {
         std::cout << "General error accrued" << std::endl;
     }   
 }
+
+
