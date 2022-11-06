@@ -32,12 +32,6 @@ class Request_Header:
         self.payload_size = payload_size
 
 
-# class Response_header:
-#     def __init__(self, , payload_size = 0) -> None:
-#         self.version = version
-#         self.code = code
-#         self.payload_size = payload_size
-
 class Response:
     def __init__(self, code:RES_CODE, payload) -> None:
         
