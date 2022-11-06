@@ -1,8 +1,8 @@
 #pragma once
 
 #define CLIENT_ID_SIZE 16
-#define CLIENT_VERSION 3
 #define CLIENT_ID_STR_SIZE 32
+#define CLIENT_VERSION 3
 
 #pragma pack(push,1)
 struct req_header_model {
