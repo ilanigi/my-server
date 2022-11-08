@@ -82,4 +82,16 @@ void File_service::add_line_to_file(std::string file_name, std::string line) {
     file.close();
 }
 
+std::string File_service::get_file_path() {
+    std::string buff;
+    std::string file_path;
 
+    std::ifstream transfer_file(TRANSFER_FILE);
+    getline(transfer_file, buff, '\n');
+    getline(transfer_file, buff, '\n');
+    getline(transfer_file, file_path, '\n');
+
+    buff.clear();
+    return file_path;
+
+}
