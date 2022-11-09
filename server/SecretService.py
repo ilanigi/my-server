@@ -1,4 +1,4 @@
-from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Cipher import PKCS1_OAEP, AES
 import os
 from Crypto.PublicKey.RSA import import_key
 # from crc import CrcCalculator, Crc32
@@ -16,10 +16,10 @@ class SecretService:
         encrypt_AES_key = cipher_rsa.encrypt(AES_key)
         return encrypt_AES_key
 
-    def decrypt_file(AESkey, file):
-        # cipher = AES.new(AES_key, AES.MODE_EAX)
-        # encrypt_public_key, _ = cipher.encrypt_and_digest(public_key)
-        file = AESkey.decrypt(file)
+    def decrypt_file(self,AES_key, file):
+        cipher = AES.new(AES_key, AES.MODE_EAX,iv=0)
+        encrypt_public_key, _ = cipher.encrypt_and_digest(file)
+            # file = AESkey.decrypt(file)
         return file
 
     def check_sum(file):
