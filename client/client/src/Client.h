@@ -9,6 +9,7 @@ public:
     ~Client();
     void register_user();
     void create_RSA_keys();
+    void send_file();
     std::string AES_key;
 
 private:
