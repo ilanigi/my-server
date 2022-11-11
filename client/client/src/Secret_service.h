@@ -9,6 +9,7 @@ public:
 	  ~Secret_service();
 	  char * get_public_key(char* buffer, unsigned int size) const;
 	  std::string decrypt(const std::string& cipher);
+	  static uint32_t check_sum(const char* [], size_t );
 private:
 	std::string get_private_key() const;
 	CryptoPP::AutoSeededRandomPool rng;

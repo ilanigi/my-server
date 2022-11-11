@@ -1,6 +1,7 @@
 #include "Secret_service.h"
 #include "File_service.h"
 #include "Converters.h"
+#include <boost/crc.hpp >
 
 Secret_service::Secret_service() {
 	std::string base_64_private_key;
@@ -35,10 +36,6 @@ void Secret_service::decode_key(std::string base_64_key) {
 	private_key.Load(ss);
 }
 
-
-
-
-
 char* Secret_service::get_public_key(char* buffer, unsigned int size) const
 {
 	CryptoPP::RSAFunction publicKey(private_key);
@@ -55,10 +52,16 @@ std::string Secret_service::get_private_key() const {
 	return key;
 }
 
-std::string decrypt(const char* cipher, unsigned int length);
-std::string decrypted;
+std::string Secret_service::decrypt(const std::string& cipher) {
+	std::string decrypted;
 	CryptoPP::RSAES_OAEP_SHA_Decryptor d(private_key);
 	  std::string decrypt(const char* cipher, unsigned int length);
 	return decrypted;
+}
+
+uint32_t Secret_service::check_sum(const char * file[], size_t size) {
+	boost::crc_32_type result;
+	result.process_bytes(file, size);
+	return result.checksum();
 }
 
