@@ -145,8 +145,8 @@ void Client::create_RSA_keys() {
     {   
         length = boost::asio::read(client_socket, boost::asio::buffer(
             encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE));
-        std::string encrypet_AES_key(encrypet_AES_key_buffer);
-        AES_key = secret_service.decrypt(encrypet_AES_key);
+      
+        AES_key = secret_service.decrypt(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);
         std::cout << "AES key recived successfully" << std::endl;
     }
     else {
@@ -159,6 +159,11 @@ void Client::create_RSA_keys() {
 void Client::send_file() {
     std::cout << "Getting file path" << std::endl;
     std::string file_path = File_service::get_file_path();
+    // file to var
+    std::ifstream file(file_path);
+    
+    file.read()
+
     //check sum
     
     // encryp file
