@@ -8,7 +8,7 @@ public:
 		Secret_service();
 	  ~Secret_service();
 	  char * get_public_key(char* buffer, unsigned int size) const;
-	  std::string decrypt(const std::string& cipher);
+	  std::string decrypt(const char* cipher, unsigned int length);
 	  static uint32_t check_sum(const char* [], size_t );
 private:
 	std::string get_private_key() const;

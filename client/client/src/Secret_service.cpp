@@ -52,10 +52,10 @@ std::string Secret_service::get_private_key() const {
 	return key;
 }
 
-std::string Secret_service::decrypt(const std::string& cipher) {
+std::string Secret_service::decrypt(const char* cipher, unsigned int length) {
 	std::string decrypted;
 	CryptoPP::RSAES_OAEP_SHA_Decryptor d(private_key);
-	  std::string decrypt(const char* cipher, unsigned int length);
+	CryptoPP::StringSource ss_cipher(reinterpret_cast<const CryptoPP::byte*>(cipher), length, true, new CryptoPP::PK_DecryptorFilter(rng, d, new CryptoPP::StringSink(decrypted)));
 	return decrypted;
 }
 
