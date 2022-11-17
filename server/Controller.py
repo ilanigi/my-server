@@ -18,7 +18,7 @@ class Controller:
     def send_key(self,user_id, public_key):
         if not self.__services.users.user_exist_by_id(user_id):
             raise Exception('user not exist')
-
+        print('public_key is', public_key.hex())
         self.__services.users.add_public_key(user_id,public_key)
         AES_key = self.__services.secrets.create_AES_key()
         print('AES_key is', AES_key.hex())
