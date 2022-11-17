@@ -12,8 +12,8 @@ class SecretService:
     
     def encrypt_AES_key(self, AES_key, public_key):
         compiled_public_key = import_key(public_key)
-        cipher_rsa = PKCS1_OAEP.new(compiled_public_key, hashAlgo=SHA1)
-        encrypt_AES_key = cipher_rsa.encrypt(AES_key)
+        cipher_obj = PKCS1_OAEP.new(compiled_public_key)
+        encrypt_AES_key = cipher_obj.encrypt(AES_key)
         return encrypt_AES_key
 
     def decrypt_file(self,AES_key, file):
