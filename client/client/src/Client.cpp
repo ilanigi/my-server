@@ -101,7 +101,7 @@ void Client::create_RSA_keys() {
 
  
     Secret_service secret_service;
-    char public_key_buff[KEY_SIZE_NET] = {0};
+    char public_key_buff[KEY_SIZE_NET] = { 0 };
     secret_service.get_public_key(public_key_buff, KEY_SIZE_NET);
 
     req_header header = { 0 };
@@ -129,8 +129,8 @@ void Client::create_RSA_keys() {
         i++;
     }
     int j = 0;
-    
-    while (j < + KEY_SIZE_NET) {
+
+    while (j < +KEY_SIZE_NET) {
         req[i++] = public_key_buff[j++];
     }
     std::cout << "Sending public key..." << std::endl;
@@ -145,7 +145,7 @@ void Client::create_RSA_keys() {
     {   
         length = boost::asio::read(client_socket, boost::asio::buffer(
             encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE));
-      
+
         AES_key = secret_service.decrypt(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);
         std::cout << "AES key recived successfully" << std::endl;
     }
@@ -159,10 +159,13 @@ void Client::create_RSA_keys() {
 void Client::send_file() {
     std::cout << "Getting file path" << std::endl;
     std::string file_path = File_service::get_file_path();
+    // get file size
+    req_header header = { 0 };
+
     // file to var
     std::ifstream file(file_path);
     
-    file.read()
+    //file.read()
 
     //check sum
     
