@@ -64,7 +64,7 @@ class Server:
                 # socket.close()
         if mask & selectors.EVENT_WRITE:
             if data.outb:
-                print(f"Echoing {data.outb!r} to {data.addr}")
+                # print(f"Echoing {data.outb!r} to {data.addr}")
                 sent = socket.send(data.outb)  # Should be ready to write
                 data.outb = data.outb[sent:]
 
