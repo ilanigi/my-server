@@ -1,7 +1,7 @@
+
 #pragma once
 #include <string>
 #include <vector>
-
 #define TRANSFER_FILE "transfer.info"
 #define USER_FILE "me.info"
 
