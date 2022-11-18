@@ -1,5 +1,5 @@
 from Crypto.Cipher import PKCS1_OAEP, AES
-from os import urandom
+from Crypto.Random import get_random_bytes 
 from Crypto.PublicKey.RSA import import_key
 from Crypto.Hash import SHA1
 
@@ -8,7 +8,7 @@ class SecretService:
         pass
 
     def create_AES_key(self):
-        return urandom(16)
+        return get_random_bytes(16)
     
     def encrypt_AES_key(self, AES_key, public_key):
         compiled_public_key = import_key(public_key)
