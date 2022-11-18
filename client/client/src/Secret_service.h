@@ -1,3 +1,4 @@
+#pragma once
 #include <rsa.h>
 #include <osrng.h> 
 
@@ -9,7 +10,7 @@ public:
 	~Secret_service();
 	void init();
 	  void get_public_key(char* , unsigned int ) const;
-	  std::string decrypt_key(const char* , unsigned int , unsigned char* , unsigned int );
+	  void decrypt_key(const char* , unsigned int , unsigned char* , unsigned int );
 	  static uint32_t check_sum(const char* [], size_t );
 	  std::string encrypt(const char* plain, unsigned int length);
 	  void set_AES_key(unsigned char* buffer);
