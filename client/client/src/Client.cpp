@@ -11,7 +11,7 @@
 #include <fstream>
 #include <iostream>
 
-Client::Client() : client_socket(client_io_context)
+Client::Client() : client_socket(client_io_context), secret_service()
 {
     try
     {
@@ -165,21 +165,27 @@ void Client::create_RSA_keys() {
 
 void Client::send_file() {
     std::cout << "Getting file path" << std::endl;
-    std::string file_path = File_service::get_file_path();
+    //std::string file_path = File_service::get_file_path();
     // get file size
-    req_header header = { 0 };
+    //req_header header = { 0 };
 
     // file to var
-    std::ifstream file(file_path);
+    //std::ifstream file(file_path);
     
     //file.read()
 
     //check sum
-    
+    std::string message = "top secret!";
+    std::string encrypted = secret_service.encrypt(message.c_str(), message.length());
+    std::cout << "messages: " << std::endl;
+    std::cout << message << std::endl;
+    std::cout << encrypted << std::endl;
+
+
     // encryp file
 
     //create header
-     
+         
     //send file
 
 
