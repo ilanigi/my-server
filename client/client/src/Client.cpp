@@ -27,6 +27,7 @@ Client::Client() : client_socket(client_io_context)
     }
 
     std::cout << "Server is connected." << std::endl;
+    
 }
 
 Client::~Client()
@@ -100,15 +101,16 @@ void Client::register_user()
 void Client::create_RSA_keys() {
 
  
-    Secret_service secret_service;
-    char public_key_buff[KEY_SIZE_NET] = { 0 };
-    secret_service.get_public_key(public_key_buff, KEY_SIZE_NET);
+    secret_service.init();
+
+    char public_key_buff[Secret_service::PUBLIC_KEY_SIZE_NET] = { 0 };
+    secret_service.get_public_key(public_key_buff, Secret_service::PUBLIC_KEY_SIZE_NET);
 
     req_header header = { 0 };
 
     header.data.code = REQ_CODE::SEND_PUBLIC_KEY;
     header.data.version = CLIENT_VERSION;
-    header.data.payload_size = KEY_SIZE_NET;
+    header.data.payload_size = Secret_service::PUBLIC_KEY_SIZE_NET;
     
     std::vector<char> client_id = File_service::get_client_id();
     
@@ -119,7 +121,7 @@ void Client::create_RSA_keys() {
         i++;
     }
 
-    std::size_t req_size = KEY_SIZE_NET + sizeof(req_header);
+    std::size_t req_size = Secret_service::PUBLIC_KEY_SIZE_NET + sizeof(req_header);
     std::vector<char> req(req_size);
 
     i = 0;
@@ -130,7 +132,7 @@ void Client::create_RSA_keys() {
     }
     int j = 0;
 
-    while (j < +KEY_SIZE_NET) {
+    while (j < Secret_service::PUBLIC_KEY_SIZE_NET) {
         req[i++] = public_key_buff[j++];
     }
     std::cout << "Sending public key..." << std::endl;
@@ -145,13 +147,18 @@ void Client::create_RSA_keys() {
     {   
         length = boost::asio::read(client_socket, boost::asio::buffer(
             encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE));
+        
+        unsigned char AES_key[Secret_service::AES_KEY_SIZE];
 
-        AES_key = secret_service.decrypt(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);
+        secret_service.decrypt_key(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE, AES_key, Secret_service::AES_KEY_SIZE);
+        secret_service.set_AES_key(AES_key);
+
         std::cout << "AES key recived successfully" << std::endl;
     }
     else {
-        std::cout << "General error accrued" << std::endl;
+        std::cout << "Failed to send public key" << std::endl;
     }   
+
 
 
 }
