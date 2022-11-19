@@ -32,10 +32,10 @@ class Users:
         return user_exist
     
     def get_user_id_by_name(self,user_name):
-        res = self.db.users.read(["name"],[user_name])
-        if res is None:
+        user = self.db.users.read(["name"],[user_name])
+        if user is None:
             raise Exception("user not found")
-        return res[0]
+        return user[0]
 
     def save_user_to_db(self, user_name:str, user_id:bytes):
         now = str(datetime.now())
@@ -46,6 +46,15 @@ class Users:
     
     def add_AES_key(self,user_id:str,AESkey:str):
         self.db.users.update((["id"],[user_id]),(["AESKey"],[AESkey]))
+    
+    def get_AES_key(self,user_id:str):
+        user = self.db.users.read(["id"],[user_id])
+        
+        if user is None:
+            raise Exception("user not found")
+        return user[4]
+
+
     
         
     
