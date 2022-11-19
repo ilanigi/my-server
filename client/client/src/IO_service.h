@@ -14,14 +14,14 @@ public:
 
 class IO_service {
 public:
+	boost::asio::streambuf request;
 	IO_service();
 	~IO_service();
 	void send(unsigned int , size_t , std::string);
-	uint16_t get_res_status();
 	void start_wait();
 	bool should_wait() const;
-	boost::asio::streambuf request;
-
+	boost::asio::streambuf* get_response_body();
+	uint16_t get_res_status();
 private:
 	Connection connection;
 
@@ -33,9 +33,7 @@ private:
 	boost::asio::streambuf header_buf;
 	res_header header_strct;
 
-    
 	void finish_wait();
-	
 
 	void handle_resolve(const boost::system::error_code& , boost::asio::ip::tcp::resolver::iterator );
 	void handle_connect(const boost::system::error_code&, boost::asio::ip::tcp::resolver::iterator);

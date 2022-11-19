@@ -114,6 +114,7 @@ void IO_service::handle_read_headers(const boost::system::error_code& err) {
 }
 
 void IO_service::handle_read_body(const boost::system::error_code& err) {
+
     if (!err)
     {
         // Process the response headers.
@@ -158,16 +159,15 @@ void IO_service::handle_read_body(const boost::system::error_code& err) {
 //    }
 //}
 
-void IO_service::send(unsigned int req_code, size_t payload_size, std::string payload) {
-    boost::asio::streambuf response;
-    req_header header = { 0 };
 
+void IO_service::send(unsigned int req_code, size_t payload_size, std::string payload) {
+    //set header and body
+    req_header header = { 0 };
     header.data.code = req_code;
     header.data.version = CLIENT_VERSION;
     header.data.payload_size = payload_size;
 
     std::size_t req_size = payload_size + sizeof(req_header);
-
     std::vector<char> req(req_size);
 
     memcpy_s(req.data(), sizeof(req_header), header.buff, sizeof(req_header));
@@ -193,4 +193,8 @@ bool IO_service::should_wait() const {
 void IO_service::finish_wait() {
     wait = false;
 
+}
+
+boost::asio::streambuf* IO_service::get_response_body(){
+    return &response;
 }
