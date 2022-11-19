@@ -67,7 +67,6 @@ void Secret_service::decrypt_key(const char* cipher, unsigned int length, unsign
 	std::string decrypted;
 	CryptoPP::RSAES_OAEP_SHA_Decryptor d(private_key);
 	CryptoPP::StringSource ss_cipher(reinterpret_cast<const CryptoPP::byte*>(cipher), length, true, new CryptoPP::PK_DecryptorFilter(rng, d, new CryptoPP::StringSink(decrypted)));
-	int i = 0;
 	memcpy_s(buffer, buffer_size, decrypted.data(), decrypted.length());
 }
 
