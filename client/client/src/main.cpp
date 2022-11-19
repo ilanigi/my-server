@@ -1,8 +1,6 @@
 #include "Client.h"
 #include <boost/asio.hpp>
 
-int BUFF_SIZE = 1024;
-
 int main() {
     Client client;
     client.register_user();
