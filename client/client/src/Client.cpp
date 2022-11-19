@@ -11,34 +11,18 @@
 #include <fstream>
 #include <iostream>
 
-Client::Client() : client_socket(client_io_context), secret_service()
+Client::Client() 
 {
-    try
-    {
-        std::vector<std::string> connection_credentials = File_service::get_connection_credentials();
-        boost::asio::ip::tcp::resolver resolver(client_io_context);
-        boost::asio::connect(client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Failed connect to serve:" << '\n';
-        std::cerr << e.what() << '\n';
-        exit(-1);
-    }
-
-    std::cout << "Server is connected." << std::endl;
-    
 }
 
 Client::~Client()
-{
-    client_socket.close();
-    std::cout << "Server is disconnected." << std::endl;
+{   
 }
 
 
-void Client::register_user()
+void Client::register_user() 
 {
+    Services services;
     if (File_service::file_exist(USER_FILE))
     {
         std::cout << "User credentials already exist." << std::endl;
@@ -47,38 +31,20 @@ void Client::register_user()
 
     std::cout << "Register user" << std::endl;
     //TODO: add check  - max user name size is 255 chars
-    user_name = File_service::get_user_name_from_file();
-    req_header header = { 0 };
-    header.data.code = REQ_CODE::REGISTER;
-    header.data.version = CLIENT_VERSION;
-    header.data.payload_size = user_name.length();
-
-    std::size_t req_size = user_name.length() + sizeof(req_header);
-
-    
-    std::vector<char> req(req_size);
-
-    int i = 0;
-    while (i < sizeof(req_header))
-    {
-        req[i] = header.buff[i];
-        i++;
+    std::string user_name = File_service::get_user_name_from_file();
+    services.io_service.start_wait();
+    services.io_service.send(REQ_CODE::REGISTER, user_name.length(), user_name);
+    while (services.io_service.should_wait()) {
+        ;
     }
 
-    for (auto letter : user_name)
-    {
-        req[i++] = letter;
-    }
-
-    boost::asio::write(client_socket, boost::asio::buffer(req, req_size));
-
-    res_header res_header = { 0 };
     uint8_t user_id_buff[CLIENT_ID_SIZE] = { 0 };
 
-    size_t length = boost::asio::read(client_socket, boost::asio::buffer(res_header.buff, sizeof(res_header)));
-    if (res_header.data.code == RES_CODE::SUCCESSFUL_REGISTER)
+    uint16_t code = services.io_service.get_res_status();
+
+    if (code == RES_CODE::SUCCESSFUL_REGISTER)
     {
-        length = boost::asio::read(client_socket, boost::asio::buffer(user_id_buff, CLIENT_ID_SIZE));
+
         std::string user_id = bytes_to_hex(user_id_buff, CLIENT_ID_SIZE);
 
         File_service::add_line_to_file(USER_FILE, user_name);
@@ -86,7 +52,7 @@ void Client::register_user()
         std::cout << "User registered successully" << std::endl;
 
     }
-    else if (res_header.data.code == RES_CODE::REGISTER_FAILED)
+    else if (code == RES_CODE::REGISTER_FAILED)
     {
         std::cout << "Failed to register new user:" << std::endl;
         // TODO: create retry system , add first error: 'server responded with an error' and after 3 tries full error
@@ -101,7 +67,7 @@ void Client::register_user()
 void Client::create_RSA_keys() {
 
  
-    secret_service.init();
+    /*secret_service.init();
 
     char public_key_buff[Secret_service::PUBLIC_KEY_SIZE_NET] = { 0 };
     secret_service.get_public_key(public_key_buff, Secret_service::PUBLIC_KEY_SIZE_NET);
@@ -112,7 +78,8 @@ void Client::create_RSA_keys() {
     header.data.version = CLIENT_VERSION;
     header.data.payload_size = Secret_service::PUBLIC_KEY_SIZE_NET;
     
-    std::vector<char> client_id = File_service::get_client_id();
+    std::vector<char> 
+    = File_service::get_client_id();
     
     int i = 0;
 
@@ -157,7 +124,7 @@ void Client::create_RSA_keys() {
     }
     else {
         std::cout << "Failed to send public key" << std::endl;
-    }   
+    }   */
 
 
 
@@ -181,7 +148,7 @@ void Client::send_file() {
     //create header
 
     //send file
-    std::string message = "top secret!";
+    /*std::string message = "top secret!";
     std::string encrypted = secret_service.encrypt(message.c_str(), message.length());
     std::cout << "messages: " << std::endl;
     std::cout << message << std::endl;
@@ -218,8 +185,13 @@ void Client::send_file() {
     }
 
 
-    boost::asio::write(client_socket, boost::asio::buffer(req, req_size));
+    boost::asio::write(client_socket, boost::asio::buffer(req, req_size));*/
 
 
    
 }
+
+
+
+Services::Services():io_service(), secret_service() {}
+Services::~Services(){}
