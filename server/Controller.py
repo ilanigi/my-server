@@ -26,7 +26,11 @@ class Controller:
         encrypt_AES_key = self.__services.secrets.encrypt_AES_key(AES_key,public_key)
         print('encrypt_AES_key is', encrypt_AES_key.hex())
         return self.__services.send.ok.send_public_key(encrypt_AES_key)
-        
+    
+    def recive_file(self,user_id, decypted_file):
+        AES_key = self.__services.users.get_AES_key(user_id)
+        file = self.__services.secrets.decrypt_file(AES_key,decypted_file)
+        pass
 
 
 
