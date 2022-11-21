@@ -102,7 +102,7 @@ void IO_service::handle_read_headers(const boost::system::error_code& err) {
             return;
         }
         if (header_strct.data.payload_size > 0) {
-            boost::asio::async_read(connection.client_socket, response, boost::asio::transfer_exactly(sizeof(header_strct.data.payload_size)),
+            boost::asio::async_read(connection.client_socket, response, boost::asio::transfer_exactly(header_strct.data.payload_size),
             boost::bind(&IO_service::handle_read_body, this,
                 boost::asio::placeholders::error));
         }
@@ -118,20 +118,21 @@ void IO_service::handle_read_body(const boost::system::error_code& err) {
     if (!err)
     {
         // Process the response headers.
-        std::istream response_stream(&response);
+        /*std::istream response_stream(&response);
         std::string header;
         while (std::getline(response_stream, header) && header != "\r")
             std::cout << header << "\n";
-        std::cout << "\n";
+        std::cout << "\n";*/
 
         // Write whatever content we already have to output.
-        if (response.size() > 0)
-            std::cout << &response;
+        /*if (response.size() > 0)
+            std::cout << &response;*/
 
         // Start reading remaining data until EOF.
-        boost::asio::async_read(connection.client_socket, response,
+        /*boost::asio::async_read(connection.client_socket, response,
             boost::asio::transfer_at_least(1),
-            boost::bind(&IO_service::finish_wait, this));
+            boost::bind(&IO_service::finish_wait, this));*/
+        finish_wait();
     }
     else
     {
