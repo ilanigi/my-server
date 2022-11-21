@@ -32,7 +32,7 @@ void Client::register_user()
     std::cout << "Register user" << std::endl;
     //TODO: add check  - max user name size is 255 chars
     std::string user_name = File_service::get_user_name_from_file();
-    
+       
     services.io_service.start_wait();
 
     services.io_service.send(REQ_CODE::REGISTER, user_name.length(), user_name);
@@ -41,7 +41,6 @@ void Client::register_user()
         ;
     }
 
-    
     uint8_t user_id_buff[CLIENT_ID_SIZE] = { 0 };
 
     uint16_t code = services.io_service.get_res_status();
@@ -49,7 +48,7 @@ void Client::register_user()
     if (code == RES_CODE::SUCCESSFUL_REGISTER)
     {
         std::istream is(services.io_service.get_response_body());
-        is.read((char*)&user_id_buff, sizeof(res_header));
+        is.read((char*)user_id_buff, CLIENT_ID_SIZE);
 
         std::string user_id = bytes_to_hex(user_id_buff, CLIENT_ID_SIZE);
 
