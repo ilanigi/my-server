@@ -16,25 +16,17 @@ IO_service::~IO_service(){
 }
 
 void IO_service::connect() {
-      try
-    {
-        std::vector<std::string> connection_credentials = File_service::get_connection_credentials();
-        boost::asio::ip::tcp::resolver::query query(connection_credentials[0], connection_credentials[1]);
-                //boost::asio::ip::tcp::resolver resolver(client_io_context);
-        /*boost::asio::connect(client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));*/
+  
+    std::vector<std::string> connection_credentials = File_service::get_connection_credentials();
+    boost::asio::ip::tcp::resolver::query query(connection_credentials[0], connection_credentials[1]);
+            //boost::asio::ip::tcp::resolver resolver(client_io_context);
+    /*boost::asio::connect(client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));*/
 
-        connection.resolver.async_resolve(query,
-            boost::bind(&IO_service::handle_resolve, this,
-                boost::asio::placeholders::error,
-                boost::asio::placeholders::iterator));
-
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Failed connect to serve:" << '\n';
-        std::cerr << e.what() << '\n';
-        exit(-1);
-    }
+    connection.resolver.async_resolve(query,
+        boost::bind(&IO_service::handle_resolve, this,
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::iterator));
+   
 }
 
 void IO_service::handle_resolve(const boost::system::error_code& err , boost::asio::ip::tcp::resolver::iterator endpoint_iterator){
@@ -69,13 +61,14 @@ void IO_service::handle_connect(const boost::system::error_code& err, boost::asi
         }
         else
         {
-            std::cout << "Error: " << err.message() << "\n";
+            throw  std::invalid_argument(err.message());
+            
         }
     }
-    std::cout << "Server is connected." << std::endl;
 }
 
 void IO_service::handle_write_request(const boost::system::error_code& err) {
+    std::cout << "Server is connected." << std::endl;
 
     if (!err)
     {
@@ -161,9 +154,18 @@ void IO_service::handle_read_body(const boost::system::error_code& err) {
 //}
 
 
-void IO_service::send(unsigned int req_code, size_t payload_size, std::string payload) {
+void IO_service::send(unsigned int req_code, size_t payload_size, std::string payload, std::vector<char> client_id) {
+    
+    //create busy wating
+    start_wait();
+
     //set header and body
     req_header header = { 0 };
+    
+    if (client_id.size() > 0) {
+        memcpy_s(header.data.client_id, CLIENT_ID_SIZE,client_id.data(), client_id.size());
+    }
+
     header.data.code = req_code;
     header.data.version = CLIENT_VERSION;
     header.data.payload_size = payload_size;
@@ -173,6 +175,7 @@ void IO_service::send(unsigned int req_code, size_t payload_size, std::string pa
 
     memcpy_s(req.data(), sizeof(req_header), header.buff, sizeof(req_header));
     memcpy_s(req.data() + sizeof(req_header), payload_size, payload.c_str(), payload_size);
+
     
     std::ostream(&request).write(req.data(), req_size);
 

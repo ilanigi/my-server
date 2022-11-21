@@ -17,12 +17,13 @@ public:
 	boost::asio::streambuf request;
 	IO_service();
 	~IO_service();
-	void send(unsigned int , size_t , std::string);
-	void start_wait();
+	void send(unsigned int req_code, size_t payload_size, std::string payload, std::vector<char> client_id);
 	bool should_wait() const;
 	boost::asio::streambuf* get_response_body();
 	uint16_t get_res_status();
+
 private:
+	void start_wait();
 	Connection connection;
 
 	void connect();
