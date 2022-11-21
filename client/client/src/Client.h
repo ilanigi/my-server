@@ -8,8 +8,8 @@ class Services {
 public:
     Services();
     ~Services();
-    IO_service io_service;
-    Secret_service secret_service;
+    IO_service io;
+    Secret_service secrets;
 };
 
 class Client {
@@ -19,7 +19,7 @@ public:
     static void register_user();
     static void create_RSA_keys();
     static void send_file();
-
+    static const int MAX_USER_SIZE = 255;
 };
 
 
