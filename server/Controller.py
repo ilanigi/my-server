@@ -12,6 +12,7 @@ class Controller:
         if self.__services.users.user_exist_by_name(user_name):
             raise Exception('user is already exist')
         user_id = uuid.uuid4().bytes_le
+        print('user id is:',user_id.hex())
         self.__services.users.save_user_to_db(user_name,user_id)
         return self.__services.send.ok.register(user_id)
     
