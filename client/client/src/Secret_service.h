@@ -12,14 +12,14 @@ public:
 	~Secret_service();
 
 	void init();
-	void get_public_key(char* , unsigned int ) const;
+	std::string get_public_key() const;
 	void decrypt_key(const char* , unsigned int , unsigned char* , unsigned int );
 	std::string encrypt(const char* , unsigned int );
 	void set_AES_key(unsigned char* );
 
 private:
 	bool isInit = false;
-	static const unsigned int BITS = 1024;
+	static const int BITS = 1024;
 	const std::string INIT_MESSAGE = "User credentials are not exist, please register before sending key.";
 	
 	unsigned char AES_key[AES_KEY_SIZE] = {0};
