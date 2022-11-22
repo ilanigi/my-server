@@ -84,13 +84,12 @@ void Client::create_RSA_keys() {
     try{
  
         Services services;
-
+        
         std::string public_key = services.secrets.get_public_key();
-
         std::vector<char> client_id = File_service::get_client_id();
     
         std::cout << "Sending public key..." << std::endl;
-
+        
         services.io.send(REQ_CODE::SEND_PUBLIC_KEY, Secret_service::PUBLIC_KEY_SIZE_NET, public_key, client_id);
     
         while (services.io.should_wait()) {
