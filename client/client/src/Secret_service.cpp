@@ -6,11 +6,13 @@
 
 
 
-Secret_service::Secret_service() { }
+Secret_service::Secret_service() {
+	Secret_service::init();
+}
 Secret_service::~Secret_service() {}
 
 void Secret_service::init() {
-	std::string base_64_private_key;
+std::string base_64_private_key;
 
 	if (File_service::file_exist(USER_FILE)) {
 		base_64_private_key = File_service::get_private_key();
@@ -19,9 +21,12 @@ void Secret_service::init() {
 			init_from_file(base_64_private_key);
 		}
 		else {
-			// create and add to me.info
+			// create and add key to me.info
 			std::cout << "crating private key" << std::endl;
 			private_key.Initialize(rng, BITS);
+			if (!private_key.Validate(rng, 2)) {
+				throw std::runtime_error("generated key is invalid");
+			}
 			add_key_to_file();
 		}
 		isInit = true;
@@ -32,7 +37,8 @@ void Secret_service::init() {
 }
 
 void Secret_service::add_key_to_file() {
-	std::string base_64_key = Base_64_service::encode(get_private_key());
+	std::string str_private_key = get_private_key();
+	std::string base_64_key = Base_64_service::encode(str_private_key);
 	File_service::add_line_to_file(USER_FILE, base_64_key);
 }
 
@@ -40,17 +46,22 @@ void Secret_service::init_from_file(std::string base_64_key) {
 	std::string key = Base_64_service::decode(base_64_key);
 	CryptoPP::StringSource ss(key, true);
 	private_key.Load(ss);
+	if (!private_key.Validate(rng, 2)) {
+		throw std::runtime_error("loaded key is invalid");
+	}
 }
 
-void Secret_service::get_public_key(char* keyout, unsigned int length) const
+std::string Secret_service::get_public_key() const
 {
 	if (!isInit) {
 		throw std::invalid_argument(INIT_MESSAGE);
 	}
 	CryptoPP::RSAFunction publicKey(private_key);
-	CryptoPP::ArraySink as(reinterpret_cast<CryptoPP::byte*>(keyout), length);
-	publicKey.Save(as);
-	return;
+
+	std::string key;
+	CryptoPP::StringSink ss(key);
+	publicKey.Save(ss);
+	return key;
 }
 
 std::string Secret_service::get_private_key() const {
