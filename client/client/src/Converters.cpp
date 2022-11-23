@@ -15,10 +15,10 @@ std::string bytes_to_hex(const uint8_t* data, int len)
 	return stream.str();
 }
 
-std::string Base_64_service::encode(const std::string& str)
+std::string Base_64_service::encode(const std::string& key)
 {
 	std::string encoded;
-	CryptoPP::StringSource ss(str, true,
+	CryptoPP::StringSource ss(key, true,
 		new CryptoPP::Base64Encoder(
 			new CryptoPP::StringSink(encoded)
 		) 
@@ -27,10 +27,10 @@ std::string Base_64_service::encode(const std::string& str)
 	return encoded;
 }
 
-std::string Base_64_service::decode(const std::string& str)
+std::string Base_64_service::decode(const std::string& base64_key)
 {
 	std::string decoded;
-	CryptoPP::StringSource ss(str, true,
+	CryptoPP::StringSource ss(base64_key, true,
 		new CryptoPP::Base64Decoder(
 			new CryptoPP::StringSink(decoded)
 		) 
