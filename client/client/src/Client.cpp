@@ -123,17 +123,19 @@ void Client::create_RSA_keys() {
 }
 
 void Client::send_file() {
+    Services services;
     std::cout << "Getting file path" << std::endl;
-    //std::string file_path = File_service::get_file_path();
+    std::string file_path = File_service::get_file_path();
     // get file size
-    //req_header header = { 0 };
-
-    // file to var
+    size_t file_size = File_service::get_file_size(file_path);
+    
+    //check sum
+    unsigned int check_sum = Secret_service::check_sum(file_path);
+    
     //std::ifstream file(file_path);
     
     //file.read()
 
-    //check sum
 
     // encryp file
 
