@@ -6,7 +6,7 @@ class Secret_service {
 public: 
 	static const unsigned int PUBLIC_KEY_SIZE_NET = 160;
 	static const unsigned int AES_KEY_SIZE = 16;
-	static uint32_t check_sum(const char* [], size_t );
+	static uint32_t check_sum(std::string );
 
 	Secret_service();
 	~Secret_service();
@@ -20,6 +20,8 @@ public:
 private:
 	bool isInit = false;
 	static const int BITS = 1024;
+	static const int BUFFER_SIZE = 1024;
+
 	const std::string INIT_MESSAGE = "User credentials are not exist, please register before sending key.";
 	
 	unsigned char AES_key[AES_KEY_SIZE] = {0};

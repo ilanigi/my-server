@@ -3,6 +3,7 @@
 #include "Converters.h"
 #include <boost/crc.hpp >	
 #include <modes.h>
+#include <fstream>
 
 
 
@@ -81,9 +82,27 @@ void Secret_service::decrypt_key(const char* cipher, unsigned int length, unsign
 	memcpy_s(buffer, buffer_size, decrypted.data(), decrypted.length());
 }
 
-uint32_t Secret_service::check_sum(const char * file[], size_t size) {
+uint32_t Secret_service::check_sum(std::string file_path) {
+
 	boost::crc_32_type result;
-	result.process_bytes(file, size);
+
+	std::ifstream file(file_path, std::ios_base::binary);
+
+	if (file)
+	{
+		do
+		{
+			char  buffer[BUFFER_SIZE];
+
+			file.read(buffer, BUFFER_SIZE);
+			result.process_bytes(buffer, file.gcount());
+		} while (file);
+
+	}
+	else
+	{
+		throw std::runtime_error("Filed to open file");
+	}
 	return result.checksum();
 }
 
