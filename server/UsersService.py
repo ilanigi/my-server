@@ -4,7 +4,11 @@ from Database import Database
 class Users:
     def __init__(self, db:Database):
         self.db = db
-
+    def __update_user_last_seen(self,user_id:str ):
+            now = str(datetime.now())
+            self.db.users.update((["id"], [user_id]),(["lastSeen"],[now]))
+            return
+    
     def user_exist_by_name(self, user_name:str):
         # TODO: add check by the book
         res = self.db.users.read(["name"],[user_name])
@@ -13,8 +17,7 @@ class Users:
         
         if user_exist:
             user_id = res[0]
-            now = str(datetime.now())
-            self.db.users.update((["id"], [user_id]),(["lastSeen"],[now]))
+            self.__update_user_last_seen(user_id)
        
         return user_exist
 
@@ -26,8 +29,7 @@ class Users:
         
         if user_exist:
             user_id = res[0]
-            now = str(datetime.now())
-            self.db.users.update((["id"], [user_id]),(["lastSeen"],[now]))
+            self.__update_user_last_seen(user_id)
        
         return user_exist
     
@@ -47,11 +49,15 @@ class Users:
     def add_AES_key(self,user_id:str,AESkey:str):
         self.db.users.update((["id"],[user_id]),(["AESKey"],[AESkey]))
     
-    def get_AES_key(self,user_id:str):
-        user = self.db.users.read(["id"],[user_id])
+    def get_AES_key(self,client_id:bytes):
+        user = self.db.users.read(["id"],[client_id])
         
         if user is None:
             raise Exception("user not found")
+        
+        if user[4] is None:
+            raise Exception("user AES key not found")
+
         return user[4]
 
 
