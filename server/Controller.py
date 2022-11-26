@@ -28,10 +28,14 @@ class Controller:
         print('encrypt_AES_key is', encrypt_AES_key.hex())
         return self.__services.send.ok.send_public_key(encrypt_AES_key)
     
-    def recive_file(self,user_id, decypted_file):
-        AES_key = self.__services.users.get_AES_key(user_id)
+    def recive_file(self,client_id:bytes, decypted_file:bytes,file_name:str):
+        if not self.__services.users.user_exist_by_id(client_id):
+            raise Exception('user not exist')
+
+        AES_key = self.__services.users.get_AES_key(client_id)
         file = self.__services.secrets.decrypt_file(AES_key,decypted_file)
-        pass
+
+        self.__services.files.add_file(file,client_id,file)
 
 
 
