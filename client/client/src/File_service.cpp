@@ -98,25 +98,25 @@ std::string File_service::get_file_path() {
     return file_path;
 }
 
-size_t File_service::get_file_size(std::string file_path) {
-    
-    std::ifstream file(file_path, std::ios::binary);
-    file.seekg(0, std::ios::end);
-    size_t file_size = file.tellg();
-    return file_size;
-
-
-}
-std::string File_service::get_file_content(std::string file_path) {
-    std::string buff;
-    std::string content = "";
-    std::ifstream file(file_path);
-        
-    while (!file.eof()) {
-        getline(file, buff);
-        content.append(buff);
+//size_t File_service::get_file_size(std::string file_path) {
+//    
+//    std::ifstream file(file_path, std::ios::binary);
+//    file.seekg(0, std::ios::end);
+//    size_t file_size = file.tellg();
+//    return file_size;
+//
+//
+//}
+std::vector<char> File_service::get_file_content(std::string file_path) {
+      
+    std::ifstream file (file_path, std::ios_base::binary);
+    if (!file.good()) {
+        throw std::runtime_error("File does not exist");
     }
-    file.close();
 
-    return content;
+    std::vector<char> bytes((std::istreambuf_iterator<char>(file)),
+        (std::istreambuf_iterator<char>()));
+
+    return bytes; 
+    
     }
