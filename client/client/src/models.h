@@ -1,8 +1,10 @@
 #pragma once
 #include <stdint.h>
+#include "Secret_service.h"
 
 #define CLIENT_ID_SIZE 16
 #define CLIENT_ID_STR_SIZE 32
+#define NAME_MAX_SIZE 255
 
 
 #pragma pack(push,1)
@@ -20,6 +22,45 @@ union req_header
     char buff[sizeof(req_header_model)];
 };
 
+#pragma pack(push,1)
+struct send_key_req_body_model{
+    uint8_t client_id[NAME_MAX_SIZE];
+    uint8_t public_key[Secret_service::PUBLIC_KEY_SIZE_NET];
+};
+#pragma pack(pop)
+
+union send_key_req_body {
+    send_key_req_body_model data;
+    char buff[sizeof(send_key_req_body_model)];
+};
+
+#pragma pack(push,1)
+struct send_file_req_body_model {
+    uint8_t client_id[CLIENT_ID_SIZE];
+    uint8_t file_name[NAME_MAX_SIZE];
+    uint32_t file_size;
+    //content
+};
+#pragma pack(pop)
+
+union send_file_req_body {
+    send_file_req_body_model data;
+    char buff[sizeof(send_file_req_body_model)];
+};
+
+#pragma pack(push,1)
+struct crc_req_body_model {
+    uint8_t client_id[CLIENT_ID_SIZE];
+    uint8_t file_name[NAME_MAX_SIZE];
+};
+#pragma pack(pop)
+
+union crc_req_body {
+    crc_req_body_model data;
+    char buff[sizeof(crc_req_body_model)];
+};
+
+
 enum REQ_CODE {
     REGISTER = 1100,
     SEND_PUBLIC_KEY = 1101,
@@ -27,12 +68,6 @@ enum REQ_CODE {
     CRC_VALID = 1104,
     CRC_INVALID = 1105,
     CRC_FAILED = 1106
-};
-
-enum REQ_PAYLOAD_SIZE {
-    // REGISTER_S = 255,
-    SEND_PUBLIC_KEY_S = 415,
-    SEND_FILE_S = 275
 };
 
 #pragma pack(push,1)
@@ -48,6 +83,8 @@ union res_header
     res_header_model data;
     char buff[sizeof(res_header_model)];
 };
+
+
 
 enum RES_CODE {
     SUCCESSFUL_REGISTER = 2100,
