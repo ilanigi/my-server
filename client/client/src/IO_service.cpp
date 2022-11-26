@@ -19,9 +19,7 @@ void IO_service::connect() {
   
     std::vector<std::string> connection_credentials = File_service::get_connection_credentials();
     boost::asio::ip::tcp::resolver::query query(connection_credentials[0], connection_credentials[1]);
-            //boost::asio::ip::tcp::resolver resolver(client_io_context);
-    /*boost::asio::connect(client_socket, resolver.resolve(connection_credentials[0], connection_credentials[1]));*/
-
+         
     connection.resolver.async_resolve(query,
         boost::bind(&IO_service::handle_resolve, this,
             boost::asio::placeholders::error,
@@ -61,8 +59,7 @@ void IO_service::handle_connect(const boost::system::error_code& err, boost::asi
         }
         else
         {
-            throw  std::invalid_argument(err.message());
-            
+            throw  std::invalid_argument(err.message());   
         }
     }
 }
@@ -176,7 +173,6 @@ void IO_service::send(unsigned int req_code, size_t payload_size, std::string pa
     memcpy_s(req.data(), sizeof(req_header), header.buff, sizeof(req_header));
     memcpy_s(req.data() + sizeof(req_header), payload_size, payload.c_str(), payload_size);
 
-    
     std::ostream(&request).write(req.data(), req_size);
 
     connect();
@@ -184,6 +180,25 @@ void IO_service::send(unsigned int req_code, size_t payload_size, std::string pa
 
 }
 
+
+//void IO_service::send_file( std::string encrypted_file_content, std::vector<char> client_id) {
+//    //create busy wating
+//    start_wait();
+//
+//    req_header header = { 0 };
+//    
+//    memcpy_s(header.data.client_id, CLIENT_ID_SIZE, client_id.data(), client_id.size());
+//    
+//    header.data.code = ;
+//    header.data.version = CLIENT_VERSION;
+//    header.data.payload_size = encrypted_file_content.size();
+//
+//    std::size_t req_size = encrypted_file_content.size() + sizeof(req_header);
+//    std::vector<char> req(req_size);
+//
+//    memcpy_s(req.data(), sizeof(req_header), header.buff, sizeof(req_header));
+//
+//}
 uint16_t IO_service::get_res_status()  {
     return header_strct.data.code;
 }

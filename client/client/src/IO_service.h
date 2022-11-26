@@ -18,6 +18,8 @@ public:
 	IO_service();
 	~IO_service();
 	void send(unsigned int req_code, size_t payload_size, std::string payload, std::vector<char> client_id);
+	//void send_file( std::string encrypted_file_content, std::vector<char> client_id);
+
 	bool should_wait() const;
 	boost::asio::streambuf* get_response_body();
 	uint16_t get_res_status();
