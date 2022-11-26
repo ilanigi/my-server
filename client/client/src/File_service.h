@@ -15,4 +15,5 @@ static void add_line_to_file(std::string file_name, std::string line);
 static std::vector<char> get_client_id();
 static std::string get_file_path();
 static size_t get_file_size(std::string file_path);
+static std::string get_file_content(std::string file_path);
 };

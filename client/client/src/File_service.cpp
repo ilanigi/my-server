@@ -69,12 +69,13 @@ std::string File_service::get_private_key() {
     std::ifstream user_file(USER_FILE);
     getline(user_file, buff, '\n');
     getline(user_file, buff, '\n');
+    buff = "";
     while (!user_file.eof()) {
         user_file >> buff;
         key.append(buff);
     }
     user_file.close();
-
+    buff.clear();
     return key;
 }
 
@@ -104,4 +105,18 @@ size_t File_service::get_file_size(std::string file_path) {
     size_t file_size = file.tellg();
     return file_size;
 
+
 }
+std::string File_service::get_file_content(std::string file_path) {
+    std::string buff;
+    std::string content = "";
+    std::ifstream file(file_path);
+        
+    while (!file.eof()) {
+        getline(file, buff);
+        content.append(buff);
+    }
+    file.close();
+
+    return content;
+    }
