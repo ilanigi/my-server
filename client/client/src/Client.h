@@ -17,8 +17,8 @@ public:
     Client();
     ~Client();
     static void register_user();
-    static void create_RSA_keys();
-    static void send_file();
+    static void create_RSA_keys(unsigned char * AES_key);
+    static void send_file(unsigned char* AES_key);
     static const int MAX_USER_SIZE = 255;
 };
 

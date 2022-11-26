@@ -80,7 +80,7 @@ void Client::register_user()
 
 }
     
-void Client::create_RSA_keys() {
+void Client::create_RSA_keys(unsigned char * AES_key) {
     try{
  
         Services services;
@@ -105,11 +105,10 @@ void Client::create_RSA_keys() {
 
             is.read((char*)encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);
                 
-            unsigned char AES_key[Secret_service::AES_KEY_SIZE];
+            
 
             services.secrets.decrypt_key(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE, AES_key, Secret_service::AES_KEY_SIZE);
-            services.secrets.set_AES_key(AES_key);
-
+            
             std::cout << "AES key recived successfully" << std::endl;
         }
         else {
@@ -122,16 +121,17 @@ void Client::create_RSA_keys() {
     }
 }
 
-void Client::send_file() {
+void Client::send_file(unsigned char* AES_key) {
     Services services;
+
+    services.secrets.set_AES_key(AES_key);
+
     std::cout << "Getting file path" << std::endl;
     std::string file_path = File_service::get_file_path();
-    
-    size_t file_size = File_service::get_file_size(file_path);  
-    
-    std::string file_content = File_service::get_file_content(file_path);
-    std::string message = "this is a secret!";
-    std::string encrypted = services.secrets.encrypt(message.c_str(), message.length());
+          
+    std::vector<char> file_content = File_service::get_file_content(file_path);
+
+    std::string encrypted = services.secrets.encrypt(file_content.data(), file_content.size());
 
     std::vector<char> client_id = File_service::get_client_id();
         services.io.send(REQ_CODE::SEND_FILE,encrypted.size(),encrypted, client_id);
