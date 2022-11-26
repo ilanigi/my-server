@@ -18,5 +18,5 @@ class Files:
 
 
     def verify_file(self,file_name, client_id):
-        self.db.users.update((["id","name"],[client_id, file_name]),(["verified"],[True]))
+        self.db.clients.update((["id","name"],[client_id, file_name]),(["verified"],[True]))
         pass

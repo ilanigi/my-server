@@ -1,64 +1,64 @@
 from datetime import datetime
 from Database import Database
 
-class Users:
+class Clients:
     def __init__(self, db:Database):
         self.db = db
-    def __update_user_last_seen(self,user_id:str ):
+    def __update_client_last_seen(self,client_id:str ):
             now = str(datetime.now())
-            self.db.users.update((["id"], [user_id]),(["lastSeen"],[now]))
+            self.db.clients.update((["id"], [client_id]),(["lastSeen"],[now]))
             return
     
-    def user_exist_by_name(self, user_name:str):
+    def client_exist_by_name(self, client_name:str):
         # TODO: add check by the book
-        res = self.db.users.read(["name"],[user_name])
+        res = self.db.clients.read(["name"],[client_name])
         
-        user_exist = not res is None 
+        client_exist = not res is None 
         
-        if user_exist:
-            user_id = res[0]
-            self.__update_user_last_seen(user_id)
+        if client_exist:
+            client_id = res[0]
+            self.__update_client_last_seen(client_id)
        
-        return user_exist
+        return client_exist
 
-    def user_exist_by_id(self, user_id:str):
+    def client_exist_by_id(self, client_id:str):
         # TODO: add check by the book
-        res = self.db.users.read(["id"],[user_id])
+        res = self.db.clients.read(["id"],[client_id])
         
-        user_exist = not res is None 
+        client_exist = not res is None 
         
-        if user_exist:
-            user_id = res[0]
-            self.__update_user_last_seen(user_id)
+        if client_exist:
+            client_id = res[0]
+            self.__update_client_last_seen(client_id)
        
-        return user_exist
+        return client_exist
     
-    def get_user_id_by_name(self,user_name):
-        user = self.db.users.read(["name"],[user_name])
-        if user is None:
-            raise Exception("user not found")
-        return user[0]
+    def get_client_id_by_name(self,client_name):
+        client = self.db.clients.read(["name"],[client_name])
+        if client is None:
+            raise Exception("client not found")
+        return client[0]
 
-    def save_user_to_db(self, user_name:str, user_id:bytes):
+    def save_client_to_db(self, client_name:str, client_id:bytes):
         now = str(datetime.now())
-        self.db.users.create(["id", "name", "lastSeen"], [user_id, user_name, now])
+        self.db.clients.create(["id", "name", "lastSeen"], [client_id, client_name, now])
 
-    def add_public_key(self, user_id:str,public_key:str ):    
-        self.db.users.update((["id"],[user_id]),(["publicKey"],[public_key]))
+    def add_public_key(self, client_id:str,public_key:str ):    
+        self.db.clients.update((["id"],[client_id]),(["publicKey"],[public_key]))
     
-    def add_AES_key(self,user_id:str,AESkey:str):
-        self.db.users.update((["id"],[user_id]),(["AESKey"],[AESkey]))
+    def add_AES_key(self,client_id:str,AESkey:str):
+        self.db.clients.update((["id"],[client_id]),(["AESKey"],[AESkey]))
     
     def get_AES_key(self,client_id:bytes):
-        user = self.db.users.read(["id"],[client_id])
+        client = self.db.clients.read(["id"],[client_id])
         
-        if user is None:
-            raise Exception("user not found")
+        if client is None:
+            raise Exception("client not found")
         
-        if user[4] is None:
-            raise Exception("user AES key not found")
+        if client[4] is None:
+            raise Exception("client AES key not found")
 
-        return user[4]
+        return client[4]
 
 
     
