@@ -126,61 +126,21 @@ void Client::send_file() {
     Services services;
     std::cout << "Getting file path" << std::endl;
     std::string file_path = File_service::get_file_path();
-    // get file size
-    size_t file_size = File_service::get_file_size(file_path);
     
-    //check sum
-    unsigned int check_sum = Secret_service::check_sum(file_path);
+    size_t file_size = File_service::get_file_size(file_path);  
     
-    //std::ifstream file(file_path);
-    
-    //file.read()
-
-
-    // encryp file
-
-    //create header
-
-    //send file
-    /*std::string message = "top secret!";
-    std::string encrypted = secrets.encrypt(message.c_str(), message.length());
-    std::cout << "messages: " << std::endl;
-    std::cout << message << std::endl;
-    std::cout << encrypted << std::endl;
-
-    req_header header = { 0 };
-
-    header.data.code = REQ_CODE::SEND_FILE;
-    header.data.version = CLIENT_VERSION;
-    header.data.payload_size = encrypted.length();
+    std::string file_content = File_service::get_file_content(file_path);
+    std::string message = "this is a secret!";
+    std::string encrypted = services.secrets.encrypt(message.c_str(), message.length());
 
     std::vector<char> client_id = File_service::get_client_id();
-
-    int i = 0;
-
-    for (auto letter : client_id) {
-        header.data.client_id[i] = letter;
-        i++;
+        services.io.send(REQ_CODE::SEND_FILE,encrypted.size(),encrypted, client_id);
+    
+    unsigned int check_sum = Secret_service::check_sum(file_path);
+    while (services.io.should_wait()) {
+        ;
     }
-
-    std::size_t req_size = sizeof(req_header) + encrypted.length();
-    std::vector<char> req(req_size);
-
-    i = 0;
-    while (i < sizeof(req_header))
-    {
-        req[i] = header.buff[i];
-        i++;
-    }
-
-    int j = 0;
-    while (j < encrypted.length()) {
-        req[i++] = encrypted[j++];
-    }
-
-
-    boost::asio::write(client_socket, boost::asio::buffer(req, req_size));*/
-
+    
 
    
 }
