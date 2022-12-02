@@ -14,7 +14,7 @@ public:
 	void init();
 	std::string get_public_key() const;
 	void decrypt_key(const char* , unsigned int , unsigned char* , unsigned int );
-	std::string encrypt(const char* , unsigned int );
+	std::string encrypt_file(std::string file_name);
 	void set_AES_key(unsigned char* );
 
 private:

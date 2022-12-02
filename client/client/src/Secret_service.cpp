@@ -3,7 +3,9 @@
 #include "Converters.h"
 #include <boost/crc.hpp >	
 #include <modes.h>
+#include <files.h>
 #include <fstream>
+
 
 
 
@@ -106,22 +108,29 @@ uint32_t Secret_service::check_sum(std::string file_path) {
 	return result.checksum();
 }
 
-std::string Secret_service::encrypt(const char* plain, unsigned int length)
+std::string Secret_service::encrypt_file(std::string file_name)
 {
 	if (!isInit) {
 		throw std::invalid_argument(INIT_MESSAGE);
 	}
+	if (!AES_key[0]) {
+		throw std::invalid_argument("invalid AES key");
+	}
+	
 	CryptoPP::byte iv[CryptoPP::AES::BLOCKSIZE] = { 0 };
 	CryptoPP::AES::Encryption aesEncryption(AES_key, AES_KEY_SIZE);
 
 	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
+	std::string out_file_name = file_name;
 
-	std::string cipher;
-	CryptoPP::StreamTransformationFilter stfEncryptor(cbcEncryption, new CryptoPP::StringSink(cipher));
-	stfEncryptor.Put(reinterpret_cast<const CryptoPP::byte*>(plain), length);
-	stfEncryptor.MessageEnd();
+	out_file_name.append("_encrypted");
 
-	return cipher;
+	std::ifstream in{ file_name, std::ios::binary };
+	std::ofstream out{ out_file_name, std::ios::binary };
+
+	CryptoPP::FileSource fileSource(in, true, new CryptoPP::StreamTransformationFilter(cbcEncryption, new CryptoPP::FileSink(out)));
+
+	return out_file_name;
 }
 
 void Secret_service::set_AES_key(unsigned char * buffer) {
