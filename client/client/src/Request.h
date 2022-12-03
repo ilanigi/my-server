@@ -2,7 +2,7 @@
 
 #pragma pack(push,1)
 struct send_key_struct {
-	uint8_t client_id[NAME_MAX_SIZE];
+	uint8_t name[NAME_MAX_SIZE];
 	uint8_t public_key[Secret_service::PUBLIC_KEY_SIZE_NET];
 };
 #pragma pack(pop)
@@ -15,8 +15,8 @@ union send_key_union {
 #pragma pack(push,1)
 struct send_file_struct {
 	uint8_t client_id[CLIENT_ID_SIZE];
+	uint32_t content_size;
 	uint8_t file_name[NAME_MAX_SIZE];
-	uint32_t file_size;
 };
 #pragma pack(pop)
 
@@ -34,7 +34,7 @@ public:
 
 class SendKeyRequest :Resquest{
 public:
-	SendKeyRequest( std::vector<char> client_id, std::string public_key);
+	SendKeyRequest( std::vector<char> user_name, std::string public_key);
 	~SendKeyRequest();
 	const std::vector<char> getParsedRequest();
 private:
