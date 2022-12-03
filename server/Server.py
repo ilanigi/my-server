@@ -10,9 +10,12 @@ from Controller import Controller
 from Connection import Connection
 
 
+
 MESSAGE_SIZE = 1024
 TIMEOUT = 0
 CLIENT_ID_SIZE = 16
+USER_NAME_SIZE = 255
+PUBLIC_KEY_SIZE = 160
 
 class Server:
     def __init__(self,test=False):
@@ -74,18 +77,19 @@ class Server:
             header = Request_Header(data)
             if header.code == REQ_CODE.REGISTER.value:
                 format = f'<{header.payload_size}s'
-                user_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0].decode('utf-8')
+                user_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0].decode('utf-8').rstrip('\x00')
                 res = self.controller.register(user_name)
                 
             elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
-                format = f'<{header.payload_size}s'
-                public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0]
-                res = self.controller.send_key(header.user_id, public_key)
+                format = f'<{USER_NAME_SIZE}s{PUBLIC_KEY_SIZE}s'
+                user_name, public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)
+
+                res = self.controller.send_key(header.client_id, public_key)
 
             elif header.code == REQ_CODE.SEND_FILE.value:
                 format = f'<{header.payload_size}s'
-                encrypted_file, file_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)
-                res = self.controller.recive_file(header.user_id, encrypted_file,file_name)
+                client_id, file_size,  file_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)
+                res = self.controller.recive_file(header.client_id, encrypted_file,file_name)
 
             elif header.code == REQ_CODE.CRC_FAILED.value:
                 pass
