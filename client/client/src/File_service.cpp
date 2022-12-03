@@ -33,7 +33,7 @@ std::vector<std::string> File_service::get_connection_credentials()
     return to_ret;
 }
 
-std::string File_service::get_user_name_from_file()
+std::vector<char> File_service::get_user_name_from_file()
 {
     std::string buff;
     std::string user_name;
@@ -43,7 +43,8 @@ std::string File_service::get_user_name_from_file()
     getline(transfer_file, user_name, '\n');
 
     buff.clear();
-    return user_name;
+    std::vector<char> user_name_vector(user_name.begin(), user_name.end());
+    return user_name_vector;
 }
 
 std::vector<char>  File_service::get_client_id() {
@@ -108,16 +109,16 @@ size_t File_service::get_file_size(std::string file_name) {
 
 
 }
-//std::vector<char> File_service::get_file_content(std::string file_path) {
-//      
-//    std::ifstream file (file_path, std::ios_base::binary);
-//    if (!file.good()) {
-//        throw std::runtime_error("File does not exist");
-//    }
-//
-//    std::vector<char> bytes((std::istreambuf_iterator<char>(file)),
-//        (std::istreambuf_iterator<char>()));
-//
-//    return bytes; 
-//    
-//    }
+std::vector<char> File_service::get_file_content(std::string file_path) {
+      
+    std::ifstream file (file_path, std::ios_base::binary);
+    if (!file.good()) {
+        throw std::runtime_error("File does not exist");
+    }
+
+    std::vector<char> bytes((std::istreambuf_iterator<char>(file)),
+        (std::istreambuf_iterator<char>()));
+
+    return bytes; 
+    
+    }
