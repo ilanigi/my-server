@@ -25,8 +25,8 @@ class RES_CODE(Enum):
 
 class Request_Header:
     def __init__(self,buffer ) -> None:
-        user_id, version, code, payload_size = unpack_from(REQ_HEADER_FORMAT,buffer=buffer,offset=0)
-        self.user_id = user_id
+        client_id, version, code, payload_size = unpack_from(REQ_HEADER_FORMAT,buffer=buffer,offset=0)
+        self.client_id = client_id
         self.version = version
         self.code = code
         self.payload_size = payload_size
