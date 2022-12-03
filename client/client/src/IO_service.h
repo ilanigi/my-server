@@ -17,9 +17,9 @@ public:
 	boost::asio::streambuf request;
 	IO_service();
 	~IO_service();
-	void send(unsigned int req_code, size_t payload_size, std::string payload, std::vector<char> client_id);
+	void send(unsigned int req_code, size_t payload_size, char * payload, std::vector<char> client_id, std::string file_name);
 	//void send_file( std::string encrypted_file_content, std::vector<char> client_id);
-
+	std::string decrypt_file_name;
 	bool should_wait() const;
 	boost::asio::streambuf* get_response_body();
 	uint16_t get_res_status();
@@ -41,8 +41,9 @@ private:
 	void handle_resolve(const boost::system::error_code& , boost::asio::ip::tcp::resolver::iterator );
 	void handle_connect(const boost::system::error_code&, boost::asio::ip::tcp::resolver::iterator);
 	void handle_write_request(const boost::system::error_code&);
+	void handle_write_file(const boost::system::error_code& );
 	void handle_read_headers(const boost::system::error_code& );
-	void handle_read_body(const boost::system::error_code& err);
+	void handle_read_body(const boost::system::error_code& );
 	//void handle_read_content(const boost::system::error_code& );
 	//void handle_read_status_line(const boost::system::error_code& );
 
