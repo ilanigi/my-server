@@ -39,14 +39,12 @@ void Client::register_user()
             std::cout << "User name is too long. Please pick a shorter one." << std::endl;
             return;
         }
-        
+        user_name.push_back('\0');
         std::vector<char> empty_client_id;
         services.io.send(REQ_CODE::REGISTER, user_name.size(), user_name, empty_client_id);
 
-        while (services.io.should_wait()) {
-            ;
-        }
-
+        services.io.do_wait();
+        
         uint8_t client_id_buff[CLIENT_ID_SIZE] = { 0 };
 
         uint16_t code = services.io.get_res_status();
@@ -95,9 +93,7 @@ void Client::create_RSA_keys(unsigned char * AES_key) {
         std::vector <char> req = sendKey.getParsedRequest();
         services.io.send(REQ_CODE::SEND_PUBLIC_KEY, req.size(), req, client_id);
     
-        while (services.io.should_wait()) {
-            ;
-        }
+        services.io.do_wait();
 
         uint16_t code = services.io.get_res_status();
 

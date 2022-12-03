@@ -66,9 +66,7 @@ void IO_service::handle_connect(const boost::system::error_code& err, boost::asi
 }
 
 void IO_service::handle_write_request(const boost::system::error_code& err) {
-    std::cout << "Server is connected." << std::endl;
-
-    if (!err)
+     if (!err)
     {
         boost::asio::async_read(connection.client_socket, header_buf, boost::asio::transfer_exactly(sizeof(res_header)),
             boost::bind(&IO_service::handle_read_headers, this,
@@ -161,7 +159,7 @@ void IO_service::send(unsigned int req_code, size_t payload_size, std::vector<ch
     req_header header = { 0 };
     
     if (client_id.size() > 0) {
-        memcpy_s(header.data.client_id, CLIENT_ID_SIZE,client_id.data(), client_id.size());
+        memcpy_s(header.data.client_id, CLIENT_ID_SIZE,client_id.data(), CLIENT_ID_SIZE);
     }
 
     header.data.code = req_code;
@@ -206,8 +204,10 @@ uint16_t IO_service::get_res_status()  {
 void IO_service::start_wait() {
     wait = true;
 }
-bool IO_service::should_wait() const {
-    return wait;
+void IO_service::do_wait() const {
+    while (wait) {
+        ;
+    }
 }
 void IO_service::finish_wait() {
     wait = false;
