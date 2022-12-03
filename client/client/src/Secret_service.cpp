@@ -107,7 +107,7 @@ uint32_t Secret_service::check_sum(std::string file_path) {
 	}
 	return result.checksum();
 }
-
+// TODO: add delete crypted file
 std::string Secret_service::encrypt_file(std::string file_name)
 {
 	if (!isInit) {
