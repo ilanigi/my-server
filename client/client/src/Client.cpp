@@ -3,6 +3,7 @@
 #include "Secret_service.h"
 #include "File_service.h"
 #include "Converters.h"
+#include "Request.h"
 
 #include <vector>
 #include <string>
@@ -31,8 +32,7 @@ void Client::register_user()
             std::cout << "User credentials already exist." << std::endl;
             return;
         }
-
-    
+            
         std::string user_name = File_service::get_user_name_from_file();
 
         if (user_name.length() > MAX_USER_SIZE) {
@@ -41,7 +41,7 @@ void Client::register_user()
         }
 
         std::vector<char> empty_client_id;
-        services.io.send(REQ_CODE::REGISTER, user_name.length(), user_name, empty_client_id);
+        services.io.send(REQ_CODE::REGISTER, user_name.length(), (char *)user_name.c_str(), empty_client_id ,"");
 
         while (services.io.should_wait()) {
             ;
@@ -87,10 +87,13 @@ void Client::create_RSA_keys(unsigned char * AES_key) {
         
         std::string public_key = services.secrets.get_public_key();
         std::vector<char> client_id = File_service::get_client_id();
-    
+        
+
+        SendKeyRequest sendKey( client_id, public_key);
+        
         std::cout << "Sending public key..." << std::endl;
         
-        services.io.send(REQ_CODE::SEND_PUBLIC_KEY, Secret_service::PUBLIC_KEY_SIZE_NET, public_key, client_id);
+        services.io.send(REQ_CODE::SEND_PUBLIC_KEY, sendKey.getSize(), (char*)sendKey.getBuffer(), client_id,"");
     
         while (services.io.should_wait()) {
             ;
@@ -103,9 +106,7 @@ void Client::create_RSA_keys(unsigned char * AES_key) {
             char encrypet_AES_key_buffer[ENCRYPTED_AES_KEY_SIZE] = { 0 };
             std::istream is(services.io.get_response_body());
 
-            is.read((char*)encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);
-                
-            
+            is.read((char*)encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);   
 
             services.secrets.decrypt_key(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE, AES_key, Secret_service::AES_KEY_SIZE);
             
@@ -122,21 +123,26 @@ void Client::create_RSA_keys(unsigned char * AES_key) {
 }
 
 void Client::send_file(unsigned char* AES_key) {
+    
     Services services;
 
     services.secrets.set_AES_key(AES_key);
 
     std::cout << "Getting file path" << std::endl;
-    std::string file_path = File_service::get_file_path();
+    
+    std::string file_name = File_service::get_file_name();
           
-    std::vector<char> file_content = File_service::get_file_content(file_path);
-
-    std::string encrypted = services.secrets.encrypt(file_content.data(), file_content.size());
+    std::string encrypted_flie_name = services.secrets.encrypt_file(file_name);
+    
+    size_t file_size = File_service::get_file_size(file_name);
 
     std::vector<char> client_id = File_service::get_client_id();
-        services.io.send(REQ_CODE::SEND_FILE,encrypted.size(),encrypted, client_id);
+
+    SendFileRequest sendfile(file_name,encrypted_flie_name, client_id,file_size);
+
+    services.io.send(REQ_CODE::SEND_FILE, sendfile.getSize(),(char *)sendfile.getBuffer(), client_id,file_name);
     
-    unsigned int check_sum = Secret_service::check_sum(file_path);
+    unsigned int check_sum = Secret_service::check_sum(file_name);
     while (services.io.should_wait()) {
         ;
     }
