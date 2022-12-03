@@ -33,15 +33,15 @@ void Client::register_user()
             return;
         }
             
-        std::string user_name = File_service::get_user_name_from_file();
+        std::vector<char> user_name = File_service::get_user_name_from_file();
 
-        if (user_name.length() > MAX_USER_SIZE) {
+        if (user_name.size() > MAX_USER_SIZE) {
             std::cout << "User name is too long. Please pick a shorter one." << std::endl;
             return;
         }
-
+        
         std::vector<char> empty_client_id;
-        services.io.send(REQ_CODE::REGISTER, user_name.length(), (char *)user_name.c_str(), empty_client_id ,"");
+        services.io.send(REQ_CODE::REGISTER, user_name.size(), user_name, empty_client_id);
 
         while (services.io.should_wait()) {
             ;
@@ -57,8 +57,8 @@ void Client::register_user()
             is.read((char*)client_id_buff, CLIENT_ID_SIZE);
 
             std::string client_id = bytes_to_hex(client_id_buff, CLIENT_ID_SIZE);
-
-            File_service::add_line_to_file(USER_FILE, user_name);
+            std::string str_user_name (user_name.begin(), user_name.end());
+            File_service::add_line_to_file(USER_FILE, str_user_name);
             File_service::add_line_to_file(USER_FILE, client_id);
             std::cout << "User registered successully" << std::endl;
 
@@ -92,8 +92,8 @@ void Client::create_RSA_keys(unsigned char * AES_key) {
         SendKeyRequest sendKey( client_id, public_key);
         
         std::cout << "Sending public key..." << std::endl;
-        
-        services.io.send(REQ_CODE::SEND_PUBLIC_KEY, sendKey.getSize(), (char*)sendKey.getBuffer(), client_id,"");
+        std::vector <char> req = sendKey.getParsedRequest();
+        services.io.send(REQ_CODE::SEND_PUBLIC_KEY, req.size(), req, client_id);
     
         while (services.io.should_wait()) {
             ;
@@ -133,14 +133,13 @@ void Client::send_file(unsigned char* AES_key) {
     std::string file_name = File_service::get_file_name();
           
     std::string encrypted_flie_name = services.secrets.encrypt_file(file_name);
-    
     size_t file_size = File_service::get_file_size(file_name);
-
     std::vector<char> client_id = File_service::get_client_id();
 
-    SendFileRequest sendfile(file_name,encrypted_flie_name, client_id,file_size);
+    SendFileRequest sendfile(file_name, encrypted_flie_name, client_id, file_size);
+    std::vector <char> req = sendfile.getParsedRequest();
 
-    services.io.send(REQ_CODE::SEND_FILE, sendfile.getSize(),(char *)sendfile.getBuffer(), client_id,file_name);
+    services.io.send(REQ_CODE::SEND_FILE, req.size(), req, client_id);
     
     unsigned int check_sum = Secret_service::check_sum(file_name);
     while (services.io.should_wait()) {
