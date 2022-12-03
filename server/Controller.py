@@ -12,7 +12,7 @@ class Controller:
         if self.__services.users.client_exist_by_name(user_name):
             raise Exception('user is already exist')
         client_id = uuid.uuid4().bytes_le
-        print('user id is:',client_id.hex())
+        print('client id is:',client_id.hex())
         self.__services.users.save_client_to_db(user_name, client_id)
         print("Registered user {} successfully".format(user_name))
         return self.__services.send.ok.register(client_id)
