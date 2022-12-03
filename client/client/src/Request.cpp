@@ -1,11 +1,12 @@
 #include "Request.h"
+#include "models.h"
 #include "File_service.h"
 
 Resquest::Resquest() {}
 Resquest::~Resquest() {}
 
-SendKeyRequest::SendKeyRequest(std::vector<char> client_id,std::string public_key) {
-	memcpy_s(body.data.client_id, CLIENT_ID_SIZE, client_id.data(), client_id.size());
+SendKeyRequest::SendKeyRequest(std::vector<char> user_name,std::string public_key) {
+	memcpy_s(body.data.name,	NAME_MAX_SIZE, user_name.data(), NAME_MAX_SIZE);
 	memcpy_s(body.data.public_key, Secret_service::PUBLIC_KEY_SIZE_NET, public_key.data(), Secret_service::PUBLIC_KEY_SIZE_NET);
 }
 SendKeyRequest::~SendKeyRequest(){}
@@ -20,7 +21,7 @@ SendFileRequest::SendFileRequest(std::string fileName, std::string encrypted_fil
 
 	memcpy_s(body.data.client_id, CLIENT_ID_SIZE, client_id.data(), client_id.size());
 	memcpy_s(body.data.file_name, NAME_MAX_SIZE, fileName.data(), fileName.size());
-	body.data.file_size = file_size;
+	body.data.content_size = file_size;
 	encypt_file_name = encrypted_file_name;
 
 }
