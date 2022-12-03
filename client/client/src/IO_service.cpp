@@ -5,7 +5,6 @@
 #include <fstream>
 #include <iostream>
 #include <boost/bind.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 
 Connection::Connection() :resolver(io_service), client_socket(io_service) {}
 Connection::~Connection() {
@@ -45,17 +44,10 @@ void IO_service::handle_resolve(const boost::system::error_code& err , boost::as
 
 void IO_service::handle_connect(const boost::system::error_code& err, boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
     if (!err) {
-        if (decrypt_file_name.length() == 0) {
-
         boost::asio::async_write(connection.client_socket, request,
             boost::bind(&IO_service::handle_write_request, this,
                 boost::asio::placeholders::error));
-        }
-        else {
-            boost::asio::async_write(connection.client_socket, request,
-                boost::bind(&IO_service::handle_write_file, this,
-                    boost::asio::placeholders::error));
-        }
+        
     }
     else{
         if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
@@ -73,30 +65,6 @@ void IO_service::handle_connect(const boost::system::error_code& err, boost::asi
     }
 }
 
-
-void IO_service::handle_write_file(const boost::system::error_code& err) {
-    
-    
-    if (!err) {
-        std::ifstream file(decrypt_file_name, std::ios::binary);
-        std::filebuf * file_buf = file.rdbuf();
-        boost::asio::streambuf buf;
-            
-        {
-            std::ostream os(&buf);
-            boost::archive::binary_oarchive out_archive(os);
-            out_archive << file;
-        }
-
-        boost::asio::async_write(connection.client_socket, buf,
-            boost::bind(&IO_service::handle_write_request, this,
-                boost::asio::placeholders::error));
-    }
-    else
-    {
-        std::cout << "Error: " << err.message() << "\n";
-    }
-}
 void IO_service::handle_write_request(const boost::system::error_code& err) {
     std::cout << "Server is connected." << std::endl;
 
@@ -181,10 +149,10 @@ void IO_service::handle_read_body(const boost::system::error_code& err) {
 //    {
 //        std::cout << "Error: " << err << "\n";
 //    }
-//}
+//} 
 
 
-void IO_service::send(unsigned int req_code, size_t payload_size, char * payload, std::vector<char> client_id, std::string file_name) {
+void IO_service::send(unsigned int req_code, size_t payload_size, std::vector<char> payload, std::vector<char> client_id) {
     
     //create busy wating
     start_wait();
@@ -202,12 +170,9 @@ void IO_service::send(unsigned int req_code, size_t payload_size, char * payload
 
     std::size_t req_size = payload_size + sizeof(req_header);
     std::vector<char> req(req_size);
-    if (file_name.length() > 0) {
-        decrypt_file_name = file_name;
-    }
 
     memcpy_s(req.data(), sizeof(req_header), header.buff, sizeof(req_header));
-    memcpy_s(req.data() + sizeof(req_header), payload_size, payload, payload_size);
+    memcpy_s(req.data() + sizeof(req_header), payload_size, payload.data(), payload_size);
     std::ostream(&request).write(req.data(), req_size);
    
     connect();
