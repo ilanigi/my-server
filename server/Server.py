@@ -84,8 +84,8 @@ class Server:
 
             elif header.code == REQ_CODE.SEND_FILE.value:
                 format = f'<{header.payload_size}s'
-                encrypted_file = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0]
-                res = self.controller.recive_file(header.user_id, encrypted_file)
+                encrypted_file, file_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)
+                res = self.controller.recive_file(header.user_id, encrypted_file,file_name)
 
             elif header.code == REQ_CODE.CRC_FAILED.value:
                 pass
