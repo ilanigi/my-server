@@ -35,11 +35,16 @@ void Client::register_user()
             
         std::vector<char> user_name = File_service::get_user_name_from_file();
 
-        if (user_name.size() > MAX_USER_SIZE) {
+        if (user_name.size() > MAX_USER_NAME_SIZE) {
             std::cout << "User name is too long. Please pick a shorter one." << std::endl;
             return;
         }
-        user_name.push_back('\0');
+        
+        while (user_name.size()  < NAME_MAX_SIZE)
+        {
+            user_name.push_back('\0');
+        }
+
         std::vector<char> empty_client_id;
         services.io.send(REQ_CODE::REGISTER, user_name.size(), user_name, empty_client_id);
 
@@ -85,9 +90,13 @@ void Client::create_RSA_keys(unsigned char * AES_key) {
         
         std::string public_key = services.secrets.get_public_key();
         std::vector<char> client_id = File_service::get_client_id();
-        
+        std::vector<char> user_name = File_service::get_user_name_from_file();
+        while (user_name.size() < NAME_MAX_SIZE)
+        {
+            user_name.push_back('\0');
+        }
 
-        SendKeyRequest sendKey( client_id, public_key);
+        SendKeyRequest sendKey(user_name, public_key);
         
         std::cout << "Sending public key..." << std::endl;
         std::vector <char> req = sendKey.getParsedRequest();
@@ -138,9 +147,7 @@ void Client::send_file(unsigned char* AES_key) {
     services.io.send(REQ_CODE::SEND_FILE, req.size(), req, client_id);
     
     unsigned int check_sum = Secret_service::check_sum(file_name);
-    while (services.io.should_wait()) {
-        ;
-    }
+    services.io.do_wait();
    
 }
 
