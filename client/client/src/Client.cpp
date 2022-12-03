@@ -145,8 +145,6 @@ void Client::send_file(unsigned char* AES_key) {
     while (services.io.should_wait()) {
         ;
     }
-    
-
    
 }
 

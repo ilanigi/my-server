@@ -30,7 +30,6 @@ class Resquest  {
 public:
 	Resquest();
 	~Resquest();
-	virtual const std::vector<char> getParsedRequest();	
 };
 
 class SendKeyRequest :Resquest{
