@@ -30,17 +30,14 @@ class Resquest  {
 public:
 	Resquest();
 	~Resquest();
-	virtual const char* getBuffer();
-	virtual size_t getSize();
-	
+	virtual const std::vector<char> getParsedRequest();	
 };
 
 class SendKeyRequest :Resquest{
 public:
 	SendKeyRequest( std::vector<char> client_id, std::string public_key);
 	~SendKeyRequest();
-	const char * getBuffer() ;
-	size_t getSize();
+	const std::vector<char> getParsedRequest();
 private:
 	send_key_union body = {0};;
 };
@@ -50,8 +47,7 @@ class SendFileRequest :Resquest{
 public:
 	SendFileRequest(std::string fileName, std::string encrypted_file_name, std::vector<char> client_id, uint32_t file_size);
 	~SendFileRequest();
-	const char * getBuffer();
-	size_t getSize();
+	const std::vector<char> getParsedRequest();
 	std::string encypt_file_name;
 private:
 
