@@ -85,7 +85,7 @@ void File_service::add_line_to_file(std::string file_name, std::string line) {
     file.close();
 }
 
-std::string File_service::get_file_path() {
+std::string File_service::get_file_name() {
     std::string buff;
     std::string file_path;
 
@@ -98,25 +98,26 @@ std::string File_service::get_file_path() {
     return file_path;
 }
 
-//size_t File_service::get_file_size(std::string file_path) {
-//    
-//    std::ifstream file(file_path, std::ios::binary);
-//    file.seekg(0, std::ios::end);
-//    size_t file_size = file.tellg();
-//    return file_size;
-//
-//
-//}
-std::vector<char> File_service::get_file_content(std::string file_path) {
-      
-    std::ifstream file (file_path, std::ios_base::binary);
-    if (!file.good()) {
-        throw std::runtime_error("File does not exist");
-    }
-
-    std::vector<char> bytes((std::istreambuf_iterator<char>(file)),
-        (std::istreambuf_iterator<char>()));
-
-    return bytes; 
+size_t File_service::get_file_size(std::string file_name) {
     
-    }
+    std::ifstream file(file_name, std::ios::binary);
+    
+    file.seekg(0, std::ios::end);
+    size_t file_size = file.tellg();
+    return file_size;
+
+
+}
+//std::vector<char> File_service::get_file_content(std::string file_path) {
+//      
+//    std::ifstream file (file_path, std::ios_base::binary);
+//    if (!file.good()) {
+//        throw std::runtime_error("File does not exist");
+//    }
+//
+//    std::vector<char> bytes((std::istreambuf_iterator<char>(file)),
+//        (std::istreambuf_iterator<char>()));
+//
+//    return bytes; 
+//    
+//    }
