@@ -22,31 +22,6 @@ union req_header
     char buff[sizeof(req_header_model)];
 };
 
-#pragma pack(push,1)
-struct send_key_req_body_model{
-    uint8_t client_id[NAME_MAX_SIZE];
-    uint8_t public_key[Secret_service::PUBLIC_KEY_SIZE_NET];
-};
-#pragma pack(pop)
-
-union send_key_req_body {
-    send_key_req_body_model data;
-    char buff[sizeof(send_key_req_body_model)];
-};
-
-#pragma pack(push,1)
-struct send_file_req_body_model {
-    uint8_t client_id[CLIENT_ID_SIZE];
-    uint8_t file_name[NAME_MAX_SIZE];
-    uint32_t file_size;
-    //content
-};
-#pragma pack(pop)
-
-union send_file_req_body {
-    send_file_req_body_model data;
-    char buff[sizeof(send_file_req_body_model)];
-};
 
 #pragma pack(push,1)
 struct crc_req_body_model {
