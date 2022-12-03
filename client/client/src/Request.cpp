@@ -6,7 +6,7 @@ Resquest::~Resquest() {}
 
 SendKeyRequest::SendKeyRequest(std::vector<char> client_id,std::string public_key) {
 	memcpy_s(body.data.client_id, CLIENT_ID_SIZE, client_id.data(), client_id.size());
-	memcpy_s(body.data.public_key, Secret_service::PUBLIC_KEY_SIZE_NET, public_key.data(), public_key.size());
+	memcpy_s(body.data.public_key, Secret_service::PUBLIC_KEY_SIZE_NET, public_key.data(), Secret_service::PUBLIC_KEY_SIZE_NET);
 }
 SendKeyRequest::~SendKeyRequest(){}
 
