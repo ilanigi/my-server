@@ -4,7 +4,7 @@ from Checksum import crc32
 import zlib
 
 BULK_SIZE = 4096
-
+forbidden_chars = ["..","\\","/"]
 class Files:
     
     def __init__(self, db: Database):
@@ -17,8 +17,9 @@ class Files:
         if self.file_exist(file_name, client_id):
             raise Warning("File already exist for this user")
         
-        if ".." in file_name:
-            raise Exception("invalid file name")
+        for char in forbidden_chars:
+            if char in file_name:
+                raise Exception("invalid file name")
         
         file_path = BASE_PATH + f"{client_id.hex()}"
         
@@ -43,7 +44,6 @@ class Files:
     
     def remove_file(self,file_name, client_id):
         file_path = self.file_exist(file_name,client_id)
-
         
         self.db.files.delete(["id","name"],[client_id, file_name])
         
