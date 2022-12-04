@@ -22,8 +22,6 @@ class RES_CODE(Enum):
     ACC_FILE = 2103
     ACC_MESSAGE = 2104
 
-
-
 class Request_Header:
     def __init__(self,buffer ) -> None:
         client_id, version, code, payload_size = unpack_from(REQ_HEADER_FORMAT,buffer=buffer,offset=0)
@@ -31,7 +29,6 @@ class Request_Header:
         self.version = version
         self.code = code
         self.payload_size = payload_size
-
 
 class Response:
     def __init__(self, code:RES_CODE, RES_FORMAT, payload_size,payload ) -> None:

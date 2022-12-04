@@ -50,9 +50,24 @@ class Controller:
         print("checksum:", checksum)
         return self.__services.send.ok(RES_CODE.ACC_FILE.value, (client_id, len(file), file_name, checksum))
 
-    def verify_file(self, file_name, client_id):
+    def verify_file(self, client_id, file_name ):
+        if not self.__services.users.client_exist_by_id(client_id):
+            raise Exception('user not exist')
+        
+        if not self.__services.files.file_exist(file_name,client_id):
+            raise Exception('file not exist')
+         
+        self.__services.files.set_verify_true(file_name, client_id)
 
-        self.__services.files.set_verify(file_name, client_id, True)
-
+        return self.__services.send.ok(RES_CODE.ACC_MESSAGE)
+    
+    def invalidate_file(self,client_id,file_name):
+        if not self.__services.users.client_exist_by_id(client_id):
+            raise Exception('user not exist')
+        
+        if not self.__services.files.file_exist(file_name,client_id):
+            raise Exception('file not exist') 
+        
+        
 
 
