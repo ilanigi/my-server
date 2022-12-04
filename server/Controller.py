@@ -17,24 +17,24 @@ class Controller:
         print("Registered user {} successfully".format(user_name))
         return self.__services.send.ok(RES_CODE.ACC_REGISTER.value, client_id)
     
-    def send_key(self,user_id, public_key):
-        if not self.__services.users.client_exist_by_id(user_id):
+    def send_key(self,client_id, public_key):
+        if not self.__services.users.client_exist_by_id(client_id):
             raise Exception('user not exist')
         
-        print('public_key is', public_key.hex())
+        print('public_key is',public_key.hex()[:26] + '...' + public_key.hex()[-3:])
         
-        self.__services.users.add_public_key(user_id,public_key)
+        self.__services.users.add_public_key(client_id, public_key)
         AES_key = self.__services.secrets.create_AES_key()
         
         print('AES_key is', AES_key.hex())
         
-        self.__services.users.add_AES_key(user_id, AES_key)      
+        self.__services.users.add_AES_key(client_id, AES_key)      
         encrypt_AES_key = self.__services.secrets.encrypt_AES_key(AES_key,public_key)
         
-        print('encrypt_AES_key is', encrypt_AES_key.hex())
+        print('encrypt_AES_key is', encrypt_AES_key.hex()[:26] + "..." + encrypt_AES_key.hex()[-3:] )
         print("key exchanges successfully")
 
-        return self.__services.send.ok(RES_CODE.ACC_PUBLIC_KEY.value,encrypt_AES_key)
+        return self.__services.send.ok(RES_CODE.ACC_PUBLIC_KEY.value, (client_id, encrypt_AES_key))
     
     def receive_file(self,client_id:bytes, encrypted_file:bytes,file_name:str):
         if not self.__services.users.client_exist_by_id(client_id):
@@ -48,8 +48,7 @@ class Controller:
 
         checksum = self.__services.files.check_sum(file)
 
-        return self.__services.send.ok(RES_CODE.ACC_FILE.value,checksum)
-
+        return self.__services.send.ok(RES_CODE.ACC_FILE.value, (client_id, len(file), checksum, file_name))
 
     def verify_file(self, file_name, client_id):
 
