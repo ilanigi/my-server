@@ -14,7 +14,7 @@ from Connection import Connection
 MESSAGE_SIZE = 1024
 TIMEOUT = 0
 CLIENT_ID_SIZE = 16
-USER_NAME_SIZE = 255
+NAME_SIZE = 255
 PUBLIC_KEY_SIZE = 160
 
 class Server:
@@ -55,41 +55,42 @@ class Server:
         self.__connection.selector.register(conn, events, data=data)
 
     def __service_connection(self, key, mask):
-        socket = key.fileobj
-        data = key.data
+        self.socket = key.fileobj
+        message = key.data
         if mask & selectors.EVENT_READ:
-            recv_data = socket.recv(MESSAGE_SIZE)
-            if recv_data:
-                data.outb = self.handle_request(recv_data)
-            # else:
-                # print(f"Closing connection to {data.addr}")
-                # self.__connection.selector.unregister(socket)
-                # socket.close()
+            message_start = self.socket.recv(MESSAGE_SIZE)
+            if message_start:
+                message.outb = self.handle_request(message_start)
+            else:
+                print(f"Closing connection to {message.addr}")
+                self.__connection.selector.unregister(self.socket)
+                self.socket.close()
         if mask & selectors.EVENT_WRITE:
-            if data.outb:
-                # print(f"Echoing {data.outb!r} to {data.addr}")
-                sent = socket.send(data.outb)  # Should be ready to write
-                data.outb = data.outb[sent:]
+            if message.outb:
+                print(f"sending message to {message.addr}")
+                sent = self.socket.send(message.outb)  
+                message.outb = message.outb[sent:]
 
-    
-    def handle_request(self,data):
+    def handle_request(self,message):
         try:
-            header = Request_Header(data)
+            header = Request_Header(message)
             if header.code == REQ_CODE.REGISTER.value:
                 format = f'<{header.payload_size}s'
-                user_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)[0].decode('utf-8').rstrip('\x00')
+                user_name = unpack_from(format,buffer=message,offset=HEADER_SIZE)[0].decode('utf-8').rstrip('\x00')
                 res = self.controller.register(user_name)
                 
             elif header.code == REQ_CODE.SEND_PUBLIC_KEY.value:
-                format = f'<{USER_NAME_SIZE}s{PUBLIC_KEY_SIZE}s'
-                user_name, public_key = unpack_from(format,buffer=data,offset=HEADER_SIZE)
+                format = f'<{NAME_SIZE}s{PUBLIC_KEY_SIZE}s'
+                user_name, public_key = unpack_from(format,buffer=message,offset=HEADER_SIZE)
 
                 res = self.controller.send_key(header.client_id, public_key)
 
             elif header.code == REQ_CODE.SEND_FILE.value:
-                format = f'<{header.payload_size}s'
-                client_id, file_size,  file_name = unpack_from(format,buffer=data,offset=HEADER_SIZE)
-                res = self.controller.recive_file(header.client_id, encrypted_file,file_name)
+                format = f'<{CLIENT_ID_SIZE}sI{NAME_SIZE}s'
+                _client_id, file_size, file_name = unpack_from(format,buffer=message,offset=HEADER_SIZE)
+                encrypted_file = self.get_full_encrypted_file(message)
+                
+                res = self.controller.receive_file(header.client_id, encrypted_file,file_name,file_size)
 
             elif header.code == REQ_CODE.CRC_FAILED.value:
                 pass
@@ -102,6 +103,19 @@ class Server:
             return res
         except Exception as error:
             res = self.services.send.failed.general(error)
+
+    def get_full_encrypted_file(self, message):
+        encrypted_file = message[HEADER_SIZE:]
+        if len(message) < MESSAGE_SIZE:
+            message_suffix = self.__get_message_file()
+            encrypted_file += message_suffix
+        return encrypted_file
             
-
-
+    def __get_message_file(self):
+            message = b''
+            while True:
+                part = self.sock.recv(MESSAGE_SIZE)
+                message += part
+                if len(part) < MESSAGE_SIZE:
+                    break
+            return message            
