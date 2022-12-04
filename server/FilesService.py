@@ -8,6 +8,7 @@ BULK_SIZE = 4096
 class Files:
     
     def __init__(self, db: Database):
+        self.mem = {}
         self.db = db
 
     def add_file(self, client_id, file_name, file_content):
@@ -30,24 +31,32 @@ class Files:
 
         self.db.files.create(["id", "name", "pathName", "verified"], [
                              client_id, file_name, file_path, False])
+        
+        self.mem[file_path] = {'id':client_id, 'name': file_name}
+
         return file_path
 
     def file_exist(self, file_name, client_id):
+
         res = self.db.files.read(["id", "name"], [client_id, file_name])
         return res[2] if not res is None else False
     
     def remove_file(self,file_name, client_id):
         file_path = self.file_exist(file_name,client_id)
+
         
         self.db.files.delete(["id","name"],[client_id, file_name])
         
         if path.exists(file_path):
             remove(file_path)
+
+        self.mem[file_path] = None
         
 
     def set_verify_true(self, file_name, client_id):
         self.db.clients.update(
             (["id", "name"], [client_id, file_name]), (["verified"], [True]))
+        
         return
 
     def check_sum(self,file_path):

@@ -4,6 +4,7 @@ from Database import Database
 class Clients:
     def __init__(self, db:Database):
         self.db = db
+        self.mem = {}
     def __update_client_last_seen(self,client_id:str ):
             now = str(datetime.now())
             self.db.clients.update((["id"], [client_id]),(["lastSeen"],[now]))
@@ -42,6 +43,8 @@ class Clients:
     def save_client_to_db(self, client_name:str, client_id:bytes):
         now = str(datetime.now())
         self.db.clients.create(["id", "name", "lastSeen"], [client_id, client_name, now])
+        
+        self.mem[client_id.hex()] = {'name':client_name}
 
     def add_public_key(self, client_id:str,public_key:str ):    
         self.db.clients.update((["id"],[client_id]),(["publicKey"],[public_key]))
