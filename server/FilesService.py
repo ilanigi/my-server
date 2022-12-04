@@ -2,6 +2,8 @@ from Database import Database
 from os import path, makedirs
 
 class Files:
+    BASE_PATH = "clients_files/"
+    
     def __init__(self, db: Database):
         self.db = db
 
@@ -12,13 +14,13 @@ class Files:
         if ".." in file_name:
             raise Exception("invalid file name")
         
-        file_path = f"{client_id.hex()}"
+        file_path = self.BASE_PATH + f"{client_id.hex()}"
         
         if not path.exists(file_path):
             makedirs(file_path)
         
         file_path += f"/{file_name}"
-        with open(file_path, "w") as file:
+        with open(file_path, "wb") as file:
             file.write(file_content)
 
         self.db.files.create(["id", "name", "pathName", "verified"], [
@@ -35,7 +37,7 @@ class Files:
             (["id", "name"], [client_id, file_name]), (["verified"], [True]))
         return
 
-    def check_sum(file):
+    def check_sum(self, file):
         # crc_calculator = crc_calculator(Crc32.CRC32)
         # checksum = crc_calculator.calculate_checksum(file)
         return 'checksum'
