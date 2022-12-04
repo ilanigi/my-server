@@ -4,12 +4,9 @@ from Models import RES_CODE, Response, ACC_REGISTER, ACC_PUBLIC_KEY, ACC_FILE, A
 class Send:
     def __init__(self) -> None:
         pass
-    
-    def general(self,error):
-        res = Response(500, error)
-        return res.compiled
 
-    def ok(self, code, payload = None) -> None:
+
+    def message(self, code, payload = None) -> None:
         if code == RES_CODE.ACC_REGISTER.value:
             res = ACC_REGISTER(payload) 
         elif code == RES_CODE.ACC_PUBLIC_KEY.value:
