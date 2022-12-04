@@ -12,18 +12,6 @@ union send_key_union {
 	char buff[sizeof(send_key_struct)];
 };
 
-#pragma pack(push,1)
-struct send_file_struct {
-	uint8_t client_id[CLIENT_ID_SIZE];
-	uint32_t content_size;
-	uint8_t file_name[NAME_MAX_SIZE];
-};
-#pragma pack(pop)
-
-union send_file_union {
-	send_file_struct data;
-	char buff[sizeof(send_file_struct)];
-};
 
 
 class Resquest  {
@@ -41,6 +29,18 @@ private:
 	send_key_union body = {0};;
 };
 
+#pragma pack(push,1)
+struct send_file_struct {
+	uint8_t client_id[CLIENT_ID_SIZE];
+	uint32_t content_size;
+	uint8_t file_name[NAME_MAX_SIZE];
+};
+#pragma pack(pop)
+
+union send_file_union {
+	send_file_struct data;
+	char buff[sizeof(send_file_struct)];
+};
 
 class SendFileRequest :Resquest{
 public:
@@ -49,7 +49,27 @@ public:
 	const std::vector<char> getParsedRequest();
 	std::string encypt_file_name;
 private:
-
 	send_file_union body = { 0 };;
 };
 
+#pragma pack(push,1)
+struct acc_file_struct {
+	uint8_t client_id[CLIENT_ID_SIZE];
+	uint8_t file_name[NAME_MAX_SIZE];
+};
+#pragma pack(pop)
+
+union acc_file_union {
+	acc_file_struct data;
+	char buff[sizeof(acc_file_struct)];
+};
+
+
+class AccFile :Resquest {
+public:
+	AccFile(std::string fileName, std::vector<char> client_id);
+	~AccFile();
+	const std::vector<char> getParsedRequest();
+private:
+	acc_file_union body = { 0 };;
+};

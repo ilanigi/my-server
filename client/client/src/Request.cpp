@@ -17,10 +17,10 @@ const std::vector<char >SendKeyRequest::getParsedRequest() {
 }
 
 
-SendFileRequest::SendFileRequest(std::string fileName, std::string encrypted_file_name,std::vector<char> client_id, uint32_t file_size)  {
+SendFileRequest::SendFileRequest(std::string file_name, std::string encrypted_file_name,std::vector<char> client_id, uint32_t file_size)  {
 
 	memcpy_s(body.data.client_id, CLIENT_ID_SIZE, client_id.data(), client_id.size());
-	memcpy_s(body.data.file_name, NAME_MAX_SIZE, fileName.data(), fileName.size());
+	memcpy_s(body.data.file_name, NAME_MAX_SIZE, file_name.data(), file_name.size());
 	body.data.content_size = file_size;
 	encypt_file_name = encrypted_file_name;
 
@@ -34,4 +34,15 @@ const std::vector<char> SendFileRequest::getParsedRequest() {
 	full_body.insert(full_body.end(), file_content.begin(), file_content.end());
 	return full_body;
 
+}
+
+AccFile::AccFile(std::string file_name, std::vector<char> client_id) {
+	memcpy_s(body.data.client_id, CLIENT_ID_SIZE, client_id.data(), client_id.size());
+	memcpy_s(body.data.file_name, NAME_MAX_SIZE, file_name.data(), file_name.size());
+}
+AccFile::~AccFile(){}
+
+const std::vector<char> AccFile::getParsedRequest() {
+	std::vector<char> body_vector(std::begin(body.buff), std::end(body.buff));
+	return body_vector;
 }
