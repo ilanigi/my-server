@@ -136,18 +136,15 @@ void Client::send_file(unsigned char* AES_key) {
 
     services.secrets.set_AES_key(AES_key);
 
-    
     std::string file_name = File_service::get_file_name();      
     std::string encrypted_file_name = services.secrets.encrypt_file(file_name);
     size_t file_size = File_service::get_file_size(file_name);
     std::vector<char> client_id = File_service::get_client_id();
     SendFileRequest sendfile(file_name, encrypted_file_name, client_id, file_size);
     std::vector <char> req = sendfile.getParsedRequest();
-
         
     send_file_res_body_union res_body = { 0 };
 
-        
     short int counter = 1;
     unsigned int checksum;
     bool is_crc_valid = false;

@@ -81,14 +81,17 @@ class Controller:
             print(error)
             return b''
     
-    def invalidate_file(self,client_id,file_name):
+    def remove_file(self,client_id,file_name):
         try:
             if not self.__services.users.client_exist_by_id(client_id):
                 raise Exception('user not exist')
             
             if not self.__services.files.file_exist(file_name,client_id):
                 raise Exception('file not exist') 
+            
+            self.__services.files.remove_file(file_name,client_id)
             return b''
+
         except Exception as error:
             print(error)
             return b''
