@@ -1,6 +1,7 @@
 from Database import Database
 from os import path, makedirs
 from Checksum import crc32
+import zlib
 
 class Files:
     BASE_PATH = "clients_files/"
@@ -26,6 +27,7 @@ class Files:
 
         self.db.files.create(["id", "name", "pathName", "verified"], [
                              client_id, file_name, file_path, False])
+        return file_path
 
     def file_exist(self, file_name, client_id):
         res = self.db.files.read(["id", "name"], [client_id, file_name])
@@ -40,10 +42,17 @@ class Files:
 
     def check_sum(self,file_path):
         BULK_SIZE = 4096
-        with open(file_path, "rb") as file:
-            digest = crc32()
+        crc_value = 0
+        with open(file_path, 'rb') as file:
+            buffer = file.read(BULK_SIZE)
+            while len(buffer) > 0:
+                crc_value = zlib.crc32(buffer, crc_value)
+                buffer = file.read(BULK_SIZE)
+
+        # with open(file_path, "rb") as file:
+        #     digest = crc32()
             
-            while buf := file.read(BULK_SIZE):
-                digest.update(buf)
+        #     while buf := file.read(BULK_SIZE):
+        #         digest.update(buf)
         
-        return digest.digest()
+        return crc_value
