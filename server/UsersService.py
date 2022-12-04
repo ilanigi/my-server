@@ -29,7 +29,6 @@ class Clients:
         client_exist = not res is None 
         
         if client_exist:
-            client_id = res[0]
             self.__update_client_last_seen(client_id)
        
         return client_exist
