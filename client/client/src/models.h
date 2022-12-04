@@ -35,6 +35,19 @@ union crc_req_body {
     char buff[sizeof(crc_req_body_model)];
 };
 
+#pragma pack(push,1)
+struct send_file_res_body_model {
+    uint8_t client_id[CLIENT_ID_SIZE];
+    uint32_t content_size;
+    uint8_t file_name[NAME_MAX_SIZE];
+    uint32_t checksum;
+};
+#pragma pack(pop)
+
+union send_file_res_body_union {
+    send_file_res_body_model data;
+    char buff[sizeof(send_file_res_body_model)];
+};
 
 enum REQ_CODE {
     REGISTER = 1100,
