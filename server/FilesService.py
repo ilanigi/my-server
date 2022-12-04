@@ -16,7 +16,9 @@ class Files:
         
         return not res is None 
 
+    def set_verify(self,file_name, client_id,verify:bool):
+        if type(verify) is not bool:
+            raise Exception("verify is not boolean")
 
-    def verify_file(self,file_name, client_id):
-        self.db.clients.update((["id","name"],[client_id, file_name]),(["verified"],[True]))
-        pass
+        self.db.clients.update((["id","name"],[client_id, file_name]),(["verified"],[verify]))
+        return
