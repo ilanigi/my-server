@@ -42,9 +42,14 @@ class Controller:
 
         AES_key = self.__services.users.get_AES_key(client_id)
         file = self.__services.secrets.decrypt_file(AES_key,encrypted_file)
+        self.__services.files.add_file(client_id,file_name,file)
         
-    
-        self.__services.files.add_file(file,client_id,file)
+        print('file {file_name} added to db and memory')
+
+        checksum = self.__services.files.check_sum(file)
+
+        return self.__services.send.ok(RES_CODE.ACC_FILE.value,checksum)
+
 
     def verify_file(self, file_name, client_id):
 
