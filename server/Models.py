@@ -3,7 +3,7 @@ from struct import unpack_from, pack
 NAME_SIZE = 255
 REQ_HEADER_FORMAT = "<16sBHI"
 RES_FORMAT_BASE = "<BHI"
-INT_SIZE = 4
+U_INT_SIZE = 4
 VERSION = 3
 HEADER_SIZE = 23
 
@@ -35,8 +35,8 @@ class Request_Header:
 
 class Response:
     def __init__(self, code:RES_CODE, RES_FORMAT, payload_size,payload ) -> None:
-        RES_FORMAT = RES_FORMAT_BASE + RES_FORMAT
-        self.compiled = pack(RES_FORMAT,VERSION, code, payload_size, *payload)
+        TOTAL_RES_FORMAT = RES_FORMAT_BASE + RES_FORMAT
+        self.compiled = pack(TOTAL_RES_FORMAT,VERSION, code, payload_size, *payload)
 
 class ACC_REGISTER(Response):
     def __init__(self, client_id) -> None:
@@ -62,7 +62,7 @@ class REGISTER_FAILED(Response):
 class ACC_FILE(Response):
     def __init__(self, client_id, content_size, file_name, checksum) -> None:
         RES_FORMAT = f'{len(client_id)}sI{NAME_SIZE}sI'
-        payload_size = len(client_id) + INT_SIZE*2 + NAME_SIZE
+        payload_size = len(client_id) + U_INT_SIZE*2 + NAME_SIZE
         super().__init__(RES_CODE.ACC_FILE.value, RES_FORMAT, payload_size, (client_id, content_size, file_name, checksum))
     pass
 class ACC_MESSAGE(Response):

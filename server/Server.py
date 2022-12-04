@@ -5,7 +5,7 @@ from Services import Services
 from Database import Database
 from struct import unpack_from
 
-from Models import HEADER_SIZE, NAME_SIZE, REQ_CODE, Request_Header, INT_SIZE
+from Models import HEADER_SIZE, NAME_SIZE, REQ_CODE, Request_Header, U_INT_SIZE
 from Controller import Controller
 from Connection import Connection
 
@@ -105,7 +105,7 @@ class Server:
             return
 
     def get_full_encrypted_file(self, message):
-        file_content_start = HEADER_SIZE + NAME_SIZE + CLIENT_ID_SIZE + INT_SIZE
+        file_content_start = HEADER_SIZE + NAME_SIZE + CLIENT_ID_SIZE + U_INT_SIZE
         encrypted_file = message[file_content_start:]
         if len(message) == MESSAGE_SIZE:
             message_suffix = self.__get_message_file()
