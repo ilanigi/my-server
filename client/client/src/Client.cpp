@@ -109,8 +109,10 @@ void Client::create_RSA_keys(unsigned char * AES_key) {
         if (code == RES_CODE::PUBLIC_KEY_RECEIVED)
         {   
             char encrypet_AES_key_buffer[ENCRYPTED_AES_KEY_SIZE] = { 0 };
-            std::istream is(services.io.get_response_body());
+            char client_id_buffer[CLIENT_ID_SIZE] = { 0 };
 
+            std::istream is(services.io.get_response_body());
+            is.read((char*)client_id_buffer, CLIENT_ID_SIZE);
             is.read((char*)encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);   
 
             services.secrets.decrypt_key(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE, AES_key, Secret_service::AES_KEY_SIZE);
