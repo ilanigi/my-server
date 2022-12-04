@@ -1,5 +1,6 @@
 from Database import Database
 from os import path, makedirs
+from Checksum import crc32
 
 class Files:
     BASE_PATH = "clients_files/"
@@ -37,8 +38,12 @@ class Files:
             (["id", "name"], [client_id, file_name]), (["verified"], [True]))
         return
 
-    def check_sum(self, file):
-        # crc_calculator = crc_calculator(Crc32.CRC32)
-        # checksum = crc_calculator.calculate_checksum(file)
-        return 'checksum'
-        pass
+    def check_sum(self,file_path):
+        BULK_SIZE = 4096
+        with open(file_path, "rb") as file:
+            digest = crc32()
+            
+            while buf := file.read(BULK_SIZE):
+                digest.update(buf)
+        
+        return digest.digest()
