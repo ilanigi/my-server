@@ -1,6 +1,7 @@
 import sqlite3
 import os.path as path
 from Table import Table
+
 DB_FILE = "server.db"
 
 class Database:
@@ -18,6 +19,6 @@ class Database:
         self.clients = Table((connection, curser, db_exist), "clients", [("id", "VARCHAR PRIMARY KEY", bytes), (
             "name", "VARCHAR UNIQUE", str), ("publicKey", "VARCHAR", bytes), ("lastSeen", "VARCHAR", str), ("AESKey", "VARCHAR", bytes)])\
 
-        self.files = Table((connection, curser, db_exist), "files", [("id", "VARCHAR PRIMARY KEY", bytes), (
-            "name", "VARCHAR", str), ("pathName", "VARCHAR UNIQUE", str), ("verified", "VARCHAR", bool)])
+        self.files = Table((connection, curser, db_exist), "files", [("id", "VARCHAR", bytes), (
+            "name", "VARCHAR", str), ("pathName", "VARCHAR PRIMARY KEY", str), ("verified", "INTEGER", bool)])
         
