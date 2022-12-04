@@ -29,12 +29,12 @@ private:
 	Connection connection;
 
 	void connect();
-
+	
 	bool wait = true;
 	static const unsigned int CLIENT_VERSION = 3;
 	boost::asio::streambuf response;
 	boost::asio::streambuf header_buf;
-	res_header header_strct;
+	res_header header_strct = {0};
 
 	void finish_wait();
 
