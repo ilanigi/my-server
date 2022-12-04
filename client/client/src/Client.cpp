@@ -136,57 +136,67 @@ void Client::send_file(unsigned char* AES_key) {
 
     services.secrets.set_AES_key(AES_key);
 
-    std::cout << "Getting file path" << std::endl;
     
     std::string file_name = File_service::get_file_name();      
     std::string encrypted_flie_name = services.secrets.encrypt_file(file_name);
     size_t file_size = File_service::get_file_size(file_name);
     std::vector<char> client_id = File_service::get_client_id();
     SendFileRequest sendfile(file_name, encrypted_flie_name, client_id, file_size);
-
     std::vector <char> req = sendfile.getParsedRequest();
 
-    services.io.send(REQ_CODE::SEND_FILE, req.size(), req, client_id);
-    
-    unsigned int check_sum = Secret_service::check_sum(file_name);
-    services.io.do_wait();
-
-    uint16_t code = services.io.get_res_status();
-
-    if (code == RES_CODE::FILE_RECEIVED) {
         
-        send_file_res_body_union res_body = { 0 };
+    send_file_res_body_union res_body = { 0 };
 
+        
+    short int counter = 1;
+    unsigned int checksum;
+    bool is_crc_valid = false;
+    uint16_t res_code;
+
+    while (counter < MAX_FILE_SEND_RETRIES) {
+        services.io.send(REQ_CODE::SEND_FILE, req.size(), req, client_id);
+        
+        // calculate checksum only once (async)
+        if (counter == 1) {
+            checksum = Secret_service::check_sum(file_name);
+        }
+        services.io.do_wait();
+        res_code = services.io.get_res_status();
+        
         std::istream is(services.io.get_response_body());
         is.read(res_body.buff, sizeof(send_file_res_body_union));
-        short int counter = 1;
-        bool is_crc_valid = false;
-        while (counter < MAX_FILE_SEND_RETRIES) {
-            
 
-
-
-            if (check_sum == res_body.data.checksum){
-                is_crc_valid = true;
-                break;
-            }
+        if (res_code == RES_CODE::FILE_RECEIVED && checksum == res_body.data.checksum ){
+            is_crc_valid = true;
+            break;
         }
-        if (is_crc_valid) {
-            std::cout << "File send successfuly, sending acknowledgment" << std::endl;
-            AccFile acc_file(file_name, client_id);
-            std::vector <char> req = acc_file.getParsedRequest();
-            services.io.send(REQ_CODE::CRC_VALID, req.size(), req, client_id);
-            services.io.do_wait();
+        else {
+            FileAnswer invaild_crc(file_name, client_id);
+            std::vector <char> invaild_req = invaild_crc.getParsedRequest();
+            services.io.send(REQ_CODE::CRC_INVALID, req.size(), req, client_id);
+            counter++;
         }
+    }
+
+    if (is_crc_valid) {
+        std::cout << "File send successfuly, sending acknowledgment" << std::endl;
+        FileAnswer valid_file(file_name, client_id);
+        std::vector <char> valid_req = valid_file.getParsedRequest();
+        services.io.send(REQ_CODE::CRC_VALID, valid_req.size(), valid_req, client_id);
+        services.io.do_wait();
+    }
+    else {
+        FileAnswer crc_failed(file_name, client_id);
+        std::vector <char> failed_req = crc_failed.getParsedRequest();
+        services.io.send(REQ_CODE::CRC_FAILED, failed_req.size(), failed_req, client_id);
+        std::cout << "Failed to send file" << std::endl;
+    }
 
 
         
 
 
-    }
-    else {
-        std::cout << "Failed to send file" << std::endl;
-    }
+ 
     
     std::remove(encrypted_flie_name.c_str());
 
