@@ -64,7 +64,7 @@ void Client::register_user()
             std::string str_user_name (user_name.begin(), user_name.end());
             File_service::add_line_to_file(USER_FILE, str_user_name);
             File_service::add_line_to_file(USER_FILE, client_id);
-            std::cout << "User registered successully" << std::endl;
+            std::cout << "User registered successfully" << std::endl;
 
         }
         else if (code == RES_CODE::REGISTER_FAILED)
@@ -109,16 +109,16 @@ void Client::create_RSA_keys(unsigned char * AES_key) {
 
         if (code == RES_CODE::PUBLIC_KEY_RECEIVED)
         {   
-            char encrypet_AES_key_buffer[ENCRYPTED_AES_KEY_SIZE] = { 0 };
+            char encrypt_AES_key_buffer[ENCRYPTED_AES_KEY_SIZE] = { 0 };
             char client_id_buffer[CLIENT_ID_SIZE] = { 0 };
 
             std::istream is(services.io.get_response_body());
             is.read((char*)client_id_buffer, CLIENT_ID_SIZE);
-            is.read((char*)encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);   
+            is.read((char*)encrypt_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE);   
 
-            services.secrets.decrypt_key(encrypet_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE, AES_key, Secret_service::AES_KEY_SIZE);
+            services.secrets.decrypt_key(encrypt_AES_key_buffer, ENCRYPTED_AES_KEY_SIZE, AES_key, Secret_service::AES_KEY_SIZE);
             
-            std::cout << "AES key recived successfully" << std::endl;
+            std::cout << "AES key received successfully" << std::endl;
         }
         else {
             std::cout << "Failed to send public key" << std::endl;
@@ -138,10 +138,10 @@ void Client::send_file(unsigned char* AES_key) {
 
     
     std::string file_name = File_service::get_file_name();      
-    std::string encrypted_flie_name = services.secrets.encrypt_file(file_name);
+    std::string encrypted_file_name = services.secrets.encrypt_file(file_name);
     size_t file_size = File_service::get_file_size(file_name);
     std::vector<char> client_id = File_service::get_client_id();
-    SendFileRequest sendfile(file_name, encrypted_flie_name, client_id, file_size);
+    SendFileRequest sendfile(file_name, encrypted_file_name, client_id, file_size);
     std::vector <char> req = sendfile.getParsedRequest();
 
         
@@ -171,15 +171,15 @@ void Client::send_file(unsigned char* AES_key) {
             break;
         }
         else {
-            FileAnswer invaild_crc(file_name, client_id);
-            std::vector <char> invaild_req = invaild_crc.getParsedRequest();
+            FileAnswer invalid_crc(file_name, client_id);
+            std::vector <char> invalid_req = invalid_crc.getParsedRequest();
             services.io.send(REQ_CODE::CRC_INVALID, req.size(), req, client_id);
             counter++;
         }
     }
 
     if (is_crc_valid) {
-        std::cout << "File send successfuly, sending acknowledgment" << std::endl;
+        std::cout << "File send successfully, sending acknowledgment" << std::endl;
         FileAnswer valid_file(file_name, client_id);
         std::vector <char> valid_req = valid_file.getParsedRequest();
         services.io.send(REQ_CODE::CRC_VALID, valid_req.size(), valid_req, client_id);
@@ -198,7 +198,7 @@ void Client::send_file(unsigned char* AES_key) {
 
  
     
-    std::remove(encrypted_flie_name.c_str());
+    std::remove(encrypted_file_name.c_str());
 
 }
 
