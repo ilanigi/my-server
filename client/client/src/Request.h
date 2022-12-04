@@ -53,23 +53,23 @@ private:
 };
 
 #pragma pack(push,1)
-struct acc_file_struct {
+struct file_ans_struct {
 	uint8_t client_id[CLIENT_ID_SIZE];
 	uint8_t file_name[NAME_MAX_SIZE];
 };
 #pragma pack(pop)
 
-union acc_file_union {
-	acc_file_struct data;
-	char buff[sizeof(acc_file_struct)];
+union file_ans_union {
+	file_ans_struct data;
+	char buff[sizeof(file_ans_struct)];
 };
 
 
-class AccFile :Resquest {
+class FileAnswer :Resquest {
 public:
-	AccFile(std::string fileName, std::vector<char> client_id);
-	~AccFile();
+	FileAnswer(std::string fileName, std::vector<char> client_id);
+	~FileAnswer();
 	const std::vector<char> getParsedRequest();
 private:
-	acc_file_union body = { 0 };;
+	file_ans_union body = { 0 };;
 };

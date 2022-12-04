@@ -95,7 +95,6 @@ uint32_t Secret_service::check_sum(std::string file_path) {
 		do
 		{
 			char  buffer[BUFFER_SIZE];
-
 			file.read(buffer, BUFFER_SIZE);
 			result.process_bytes(buffer, file.gcount());
 		} while (file);
