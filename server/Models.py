@@ -63,8 +63,9 @@ class ACC_FILE(Response):
     def __init__(self, client_id, content_size, file_name, checksum) -> None:
         RES_FORMAT = f'{len(client_id)}sI{NAME_SIZE}sI'
         payload_size = len(client_id) + U_INT_SIZE*2 + NAME_SIZE
-        super().__init__(RES_CODE.ACC_FILE.value, RES_FORMAT, payload_size, (client_id, content_size, file_name, checksum))
+        super().__init__(RES_CODE.ACC_FILE.value, RES_FORMAT, payload_size, (client_id, content_size, bytes(file_name ,'utf-8'), checksum))
     pass
+
 class ACC_MESSAGE(Response):
     def __init__(self) -> None:
         super().__init__(RES_CODE.ACC_MESSAGE.value, "", 0, (None))
