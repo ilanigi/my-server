@@ -16,9 +16,13 @@ class Files:
         
         return not res is None 
 
-    def set_verify(self,file_name, client_id,verify:bool):
-        if type(verify) is not bool:
-            raise Exception("verify is not boolean")
-
-        self.db.clients.update((["id","name"],[client_id, file_name]),(["verified"],[verify]))
+    def set_verify_true(self,file_name, client_id):
+        
+        self.db.clients.update((["id","name"],[client_id, file_name]),(["verified"],[True]))
         return
+    
+    def check_sum(file):
+        # crc_calculator = crc_calculator(Crc32.CRC32)
+        # checksum = crc_calculator.calculate_checksum(file)
+        return 'checksum'
+        pass
