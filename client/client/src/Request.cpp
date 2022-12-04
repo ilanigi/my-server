@@ -36,13 +36,13 @@ const std::vector<char> SendFileRequest::getParsedRequest() {
 
 }
 
-AccFile::AccFile(std::string file_name, std::vector<char> client_id) {
+FileAnswer::FileAnswer(std::string file_name, std::vector<char> client_id) {
 	memcpy_s(body.data.client_id, CLIENT_ID_SIZE, client_id.data(), client_id.size());
 	memcpy_s(body.data.file_name, NAME_MAX_SIZE, file_name.data(), file_name.size());
 }
-AccFile::~AccFile(){}
+FileAnswer::~FileAnswer(){}
 
-const std::vector<char> AccFile::getParsedRequest() {
+const std::vector<char> FileAnswer::getParsedRequest() {
 	std::vector<char> body_vector(std::begin(body.buff), std::end(body.buff));
 	return body_vector;
 }
