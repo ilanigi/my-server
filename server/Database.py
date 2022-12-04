@@ -19,5 +19,5 @@ class Database:
             "name", "VARCHAR UNIQUE", str), ("publicKey", "VARCHAR", bytes), ("lastSeen", "VARCHAR", str), ("AESKey", "VARCHAR", bytes)])\
 
         self.files = Table((connection, curser, db_exist), "files", [("id", "VARCHAR PRIMARY KEY", bytes), (
-            "name", "VARCHAR", str), ("pathName ", "VARCHAR UNIQUE", str), ("verified", "VARCHAR", bool)])
+            "name", "VARCHAR", str), ("pathName", "VARCHAR UNIQUE", str), ("verified", "VARCHAR", bool)])
         
