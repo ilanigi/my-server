@@ -20,6 +20,8 @@ public:
     static void create_RSA_keys(unsigned char * AES_key);
     static void send_file(unsigned char* AES_key);
     static const int MAX_USER_NAME_SIZE = 100;
+private:
+    static const short int MAX_FILE_SEND_RETRIES = 4;
     
 };
 
