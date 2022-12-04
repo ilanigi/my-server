@@ -44,7 +44,7 @@ class Controller:
         file = self.__services.secrets.decrypt_file(AES_key,encrypted_file)
         self.__services.files.add_file(client_id,file_name,file)
         
-        print('file {file_name} added to db and memory')
+        print(f'file {file_name} added to db and memory')
 
         checksum = self.__services.files.check_sum(file)
 
