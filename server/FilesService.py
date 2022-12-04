@@ -1,22 +1,25 @@
 from Database import Database
-from os import path, makedirs
+from os import path, makedirs, remove
 from Checksum import crc32
 import zlib
 
+BULK_SIZE = 4096
+
 class Files:
-    BASE_PATH = "clients_files/"
     
     def __init__(self, db: Database):
         self.db = db
 
     def add_file(self, client_id, file_name, file_content):
+        BASE_PATH = "clients_files/"    
+        
         if self.file_exist(file_name, client_id):
             raise Warning("File already exist for this user")
         
         if ".." in file_name:
             raise Exception("invalid file name")
         
-        file_path = self.BASE_PATH + f"{client_id.hex()}"
+        file_path = BASE_PATH + f"{client_id.hex()}"
         
         if not path.exists(file_path):
             makedirs(file_path)
@@ -31,28 +34,28 @@ class Files:
 
     def file_exist(self, file_name, client_id):
         res = self.db.files.read(["id", "name"], [client_id, file_name])
-
-        return not res is None
+        return res[2] if not res is None else False
+    
+    def remove_file(self,file_name, client_id):
+        file_path = self.file_exist(file_name,client_id)
+        
+        self.db.files.delete(["id","name"],[client_id, file_name])
+        
+        if path.exists(file_path):
+            remove(file_path)
+        
 
     def set_verify_true(self, file_name, client_id):
-
         self.db.clients.update(
             (["id", "name"], [client_id, file_name]), (["verified"], [True]))
         return
 
     def check_sum(self,file_path):
-        BULK_SIZE = 4096
         crc_value = 0
         with open(file_path, 'rb') as file:
             buffer = file.read(BULK_SIZE)
             while len(buffer) > 0:
                 crc_value = zlib.crc32(buffer, crc_value)
                 buffer = file.read(BULK_SIZE)
-
-        # with open(file_path, "rb") as file:
-        #     digest = crc32()
-            
-        #     while buf := file.read(BULK_SIZE):
-        #         digest.update(buf)
-        
+                
         return crc_value
