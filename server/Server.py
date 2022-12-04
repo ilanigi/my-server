@@ -72,6 +72,7 @@ class Server:
 
     def handle_request(self,message):
         try:
+            res = b''
             header = Request_Header(message)
             if header.code == REQ_CODE.REGISTER.value:
                 format = f'<{header.payload_size}s'
@@ -88,21 +89,33 @@ class Server:
                 format = f'<{CLIENT_ID_SIZE}sI{NAME_SIZE}s'
                 _client_id, file_size, file_name = unpack_from(format,buffer=message,offset=HEADER_SIZE)
                 encrypted_file = self.get_full_encrypted_file(message)
-                
-                res = self.controller.receive_file(header.client_id, encrypted_file, file_name.decode('utf-8').rstrip('\x00') )
 
-            elif header.code == REQ_CODE.CRC_FAILED.value:
-                pass
-            elif header.code == REQ_CODE.CRC_INVALID.value:
-                pass
+                file_name = file_name.decode('utf-8').rstrip('\x00')
+
+                res = self.controller.receive_file(header.client_id, encrypted_file, file_name )
+
             elif header.code == REQ_CODE.CRC_VALID.value:
-                pass
+                file_name = self.get_file_name_from_crc_message(message)
+                res = self.controller.verify_file(header.client_id,file_name)
+            
+            elif header.code == REQ_CODE.CRC_INVALID.value:
+                return b''
+                
+            elif header.code == REQ_CODE.CRC_FAILED.value:
+                file_name = self.get_file_name_from_crc_message(message)
+                self.controller.invalidate_file(header.client_id,file_name)
+                return b''
             else:
                 raise Exception('Invalid code error')
             return res
         except Exception as error:
             print(error)
             return
+
+    def get_file_name_from_crc_message(self, message):
+        format = f'<{CLIENT_ID_SIZE}s{NAME_SIZE}s'
+        _client_id, file_name = unpack_from(format,buffer=message,offset=HEADER_SIZE)
+        return file_name
 
     def get_full_encrypted_file(self, message):
         file_content_start = HEADER_SIZE + NAME_SIZE + CLIENT_ID_SIZE + U_INT_SIZE
