@@ -110,7 +110,7 @@ class Server:
             return res
         except Exception as error:
             print(error)
-            return
+            return b''
 
     def get_file_name_from_crc_message(self, message):
         format = f'<{CLIENT_ID_SIZE}s{NAME_SIZE}s'
