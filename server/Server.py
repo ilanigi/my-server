@@ -9,8 +9,6 @@ from Models import HEADER_SIZE, NAME_SIZE, REQ_CODE, Request_Header, U_INT_SIZE
 from Controller import Controller
 from Connection import Connection
 
-
-
 MESSAGE_SIZE = 1024
 TIMEOUT = 0
 CLIENT_ID_SIZE = 16
@@ -23,14 +21,11 @@ class Server:
             services = Services(db)
             self.services = services 
             self.controller = Controller(services)
-            
-            if test:
-                return 
             self.__connection = Connection()
             self.__listen()
 
         except Exception as error:
-            # TODO: change to res.error(....
+            print("server failed on init:")
             print(error)
         finally:
             if not test:
@@ -88,22 +83,24 @@ class Server:
             elif header.code == REQ_CODE.SEND_FILE.value:
                 format = f'<{CLIENT_ID_SIZE}sI{NAME_SIZE}s'
                 _client_id, file_size, file_name = unpack_from(format,buffer=message,offset=HEADER_SIZE)
-                encrypted_file = self.get_full_encrypted_file(message)
+                encrypted_file = self.__get_full_encrypted_file(message)
 
                 file_name = file_name.decode('utf-8').rstrip('\x00')
 
                 res = self.controller.receive_file(header.client_id, encrypted_file, file_name )
 
             elif header.code == REQ_CODE.CRC_VALID.value:
-                file_name = self.get_file_name_from_crc_message(message)
+                file_name = self.__get_file_name_from_crc_message(message)
                 res = self.controller.verify_file(header.client_id,file_name)
             
             elif header.code == REQ_CODE.CRC_INVALID.value:
+                # to add user's last seen
+                self.services.users.client_exist_by_id(header.client_id)
                 return b''
                 
             elif header.code == REQ_CODE.CRC_FAILED.value:
-                file_name = self.get_file_name_from_crc_message(message)
-                self.controller.invalidate_file(header.client_id,file_name)
+                file_name = self.__get_file_name_from_crc_message(message)
+                self.controller.remove_file(header.client_id,file_name)
                 return b''
             else:
                 raise Exception('Invalid code error')
@@ -112,12 +109,12 @@ class Server:
             print(error)
             return b''
 
-    def get_file_name_from_crc_message(self, message):
+    def __get_file_name_from_crc_message(self, message):
         format = f'<{CLIENT_ID_SIZE}s{NAME_SIZE}s'
         _client_id, file_name = unpack_from(format,buffer=message,offset=HEADER_SIZE)
         return file_name
 
-    def get_full_encrypted_file(self, message):
+    def __get_full_encrypted_file(self, message):
         file_content_start = HEADER_SIZE + NAME_SIZE + CLIENT_ID_SIZE + U_INT_SIZE
         encrypted_file = message[file_content_start:]
         if len(message) == MESSAGE_SIZE:
