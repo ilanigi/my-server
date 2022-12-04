@@ -61,12 +61,12 @@ class Server:
             if message_start:
                 message.outb = self.handle_request(message_start)
             else:
-                print(f"Closing connection to {message.addr}")
+                print(f"Closing connection to {message.addr[0]}")
                 self.__connection.selector.unregister(self.socket)
                 self.socket.close()
         if mask & selectors.EVENT_WRITE:
             if message.outb:
-                print(f"sending message to {message.addr}")
+                print(f"sending message to {message.addr[0]}")
                 sent = self.socket.send(message.outb)  
                 message.outb = message.outb[sent:]
 
