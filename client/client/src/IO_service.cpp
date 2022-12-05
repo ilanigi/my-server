@@ -8,7 +8,7 @@
 
 Connection::Connection() :resolver(io_service), client_socket(io_service) {}
 Connection::~Connection() {
-    client_socket.close();
+    
 }
 
 IO_service::IO_service(): connection() , request() {}
@@ -20,7 +20,7 @@ void IO_service::connect() {
   
     std::vector<std::string> connection_credentials = File_service::get_connection_credentials();
     boost::asio::ip::tcp::resolver::query query(connection_credentials[0], connection_credentials[1]);
-         
+    
     connection.resolver.async_resolve(query,
         boost::bind(&IO_service::handle_resolve, this,
             boost::asio::placeholders::error,
@@ -68,9 +68,14 @@ void IO_service::handle_connect(const boost::system::error_code& err, boost::asi
 void IO_service::handle_write_request(const boost::system::error_code& err) {
      if (!err)
     {
-        boost::asio::async_read(connection.client_socket, header_buf, boost::asio::transfer_exactly(sizeof(res_header)),
+         if(!skip_res){
+            boost::asio::async_read(connection.client_socket, header_buf, boost::asio::transfer_exactly(sizeof(res_header)),
             boost::bind(&IO_service::handle_read_headers, this,
                 boost::asio::placeholders::error));
+         }
+         else {
+             handle_read_body(err);
+         }
     }
     else
     {
@@ -95,6 +100,7 @@ void IO_service::handle_read_headers(const boost::system::error_code& err) {
             boost::bind(&IO_service::handle_read_body, this,
                 boost::asio::placeholders::error));
         }
+        handle_read_body(err);
     }
     else
     {
@@ -122,6 +128,7 @@ void IO_service::handle_read_body(const boost::system::error_code& err) {
             boost::asio::transfer_at_least(1),
             boost::bind(&IO_service::finish_wait, this));*/
         finish_wait();
+        connection.client_socket.close();
     }
     else
     {
@@ -151,10 +158,10 @@ void IO_service::handle_read_body(const boost::system::error_code& err) {
 
 
 void IO_service::send(unsigned int req_code, size_t payload_size, std::vector<char> payload, std::vector<char> client_id) {
-    
+    skip_res = req_code == REQ_CODE::CRC_FAILED || req_code == REQ_CODE::CRC_INVALID;
     //create busy wating
     start_wait();
-
+        
     //set header and body
     req_header header = { 0 };
     
@@ -174,6 +181,7 @@ void IO_service::send(unsigned int req_code, size_t payload_size, std::vector<ch
     std::ostream(&request).write(req.data(), req_size);
    
     connect();
+    connection.io_service.restart();
     connection.io_service.run();
 
 }
