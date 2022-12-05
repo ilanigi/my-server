@@ -1,7 +1,6 @@
 from Database import Database
 from os import path, makedirs, remove
-from Checksum import crc32
-import zlib
+from zlib import crc32
 
 BULK_SIZE = 4096
 forbidden_chars = ["..","\\","/"]
@@ -64,7 +63,7 @@ class Files:
         with open(file_path, 'rb') as file:
             buffer = file.read(BULK_SIZE)
             while len(buffer) > 0:
-                crc_value = zlib.crc32(buffer, crc_value)
+                crc_value = crc32(buffer, crc_value)
                 buffer = file.read(BULK_SIZE)
                 
         return crc_value
