@@ -3,7 +3,6 @@
 server/__pycache__/main.cpython-310.pyc
 .vscode/settings.json
 CppProperties.json
-.vscode/launch.json
 
 client/bin/
 client/.vs/
