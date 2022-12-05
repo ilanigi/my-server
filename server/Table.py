@@ -57,9 +57,13 @@ class Table:
         concatenated_values =  raw_mutations_values + raw_filter_values
         self.__execute_write(query,tuple(concatenated_values))
 
-    def delete(self):
-        """DELETE FROM table_name WHERE condition"""
-        pass
+    def delete(self, raw_columns, raw_values):
+        self.__check_input(raw_columns, raw_values)
+        filter_with_q_mark = lists_to_string_with_q_mark(raw_columns)
+
+        query = """DELETE FROM {table} WHERE {filter}""".format(table=self.__name, filter=filter_with_q_mark)
+        
+        self.__execute_write(query,tuple(raw_values))
 
     def __execute_read(self, query:str, values:Tuple):
         res = self.__curser.execute(query,values)
