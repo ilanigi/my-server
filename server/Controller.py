@@ -76,7 +76,7 @@ class Controller:
             
             self.__services.files.set_verify_true(file_name, client_id)
 
-            return self.__services.send.message(RES_CODE.ACC_MESSAGE)
+            return self.__services.send.message(RES_CODE.ACC_MESSAGE.value)
         except Exception as error:
             print(error)
             return b''
@@ -90,6 +90,7 @@ class Controller:
                 raise Exception('file not exist') 
             
             self.__services.files.remove_file(file_name,client_id)
+            print(f"file {file_name} removed")
             return b''
 
         except Exception as error:
