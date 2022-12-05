@@ -7,6 +7,10 @@ U_INT_SIZE = 4
 VERSION = 3
 HEADER_SIZE = 23
 
+"""
+multiple model used in the server like response and requests structure
+"""
+
 class REQ_CODE(Enum):
     REGISTER = 1100
     SEND_PUBLIC_KEY = 1101

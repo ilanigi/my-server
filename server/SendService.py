@@ -5,8 +5,10 @@ class Send:
     def __init__(self) -> None:
         pass
 
-
     def message(self, code, payload = None) -> None:
+        """
+        switch between response by response code
+        """
         if code == RES_CODE.ACC_REGISTER.value:
             res = ACC_REGISTER(payload) 
         elif code == RES_CODE.ACC_PUBLIC_KEY.value:

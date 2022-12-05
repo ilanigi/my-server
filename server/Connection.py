@@ -5,9 +5,13 @@ HOST = "127.0.0.1"
 DEFAULT_PORT = 1234
 
 
-
 class Connection:
+    """
+    connection class handling the connection of the server to the socket, and getting and writing the messages
+    """
+
     def __init__(self):
+        """init the server connection"""
         PORT = self.__get_port_from_file()
         self.selector = selectors.DefaultSelector()
         self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

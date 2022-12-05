@@ -6,12 +6,17 @@ from Utils import list_to_comma_string, lists_to_string_with_q_mark
 
 class Table:
     def __init__(self, credentials: Tuple, name: str, columns: List[Tuple[str, str, type]]):
+        """"
+        crating database table, each table has columns that 'SQL types' and added to them python types for evaluating.
+        Those type is checked when modifying the table on any CRUD method.
+        """
         self.__connection: Connection
         self.__curser: Cursor
         self.__connection, self.__curser, db_exist = credentials
         self.__name = name
 
         self.__types = {}
+        # add types to table
         for column in columns:
             self.__types[column[0]] = column[2]
 

@@ -3,8 +3,12 @@ from os import path, makedirs, remove
 from zlib import crc32
 
 BULK_SIZE = 4096
+
 forbidden_chars = ["..","\\","/"]
+"""forbidden char to defend against Path Traversal attacks"""
+
 class Files:
+    """handling all file actions in memory and db"""
     
     def __init__(self, db: Database):
         self.mem = {}

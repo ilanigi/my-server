@@ -3,15 +3,19 @@ from Database import Database
 
 class Clients:
     def __init__(self, db:Database):
+        """
+        handle all user related methods
+        """
         self.db = db
         self.mem = {}
+
     def __update_client_last_seen(self,client_id:str ):
             now = str(datetime.now())
             self.db.clients.update((["id"], [client_id]),(["lastSeen"],[now]))
             return
     
     def client_exist_by_name(self, client_name:str):
-        # TODO: add check by the book
+        
         res = self.db.clients.read(["name"],[client_name])
         
         client_exist = not res is None 
@@ -23,7 +27,7 @@ class Clients:
         return client_exist
 
     def client_exist_by_id(self, client_id:str):
-        # TODO: add check by the book
+        
         res = self.db.clients.read(["id"],[client_id])
         
         client_exist = not res is None 
