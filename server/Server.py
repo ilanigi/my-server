@@ -94,13 +94,14 @@ class Server:
                 res = self.controller.verify_file(header.client_id,file_name)
             
             elif header.code == REQ_CODE.CRC_INVALID.value:
-                # to add user's last seen
-                self.services.users.client_exist_by_id(header.client_id)
+                file_name = self.__get_file_name_from_crc_message(message)
+                self.controller.remove_file(header.client_id,file_name)
                 return b''
                 
             elif header.code == REQ_CODE.CRC_FAILED.value:
                 file_name = self.__get_file_name_from_crc_message(message)
                 self.controller.remove_file(header.client_id,file_name)
+                print("crc filed")
                 return b''
             else:
                 raise Exception('Invalid code error')
@@ -112,6 +113,7 @@ class Server:
     def __get_file_name_from_crc_message(self, message):
         format = f'<{CLIENT_ID_SIZE}s{NAME_SIZE}s'
         _client_id, file_name = unpack_from(format,buffer=message,offset=HEADER_SIZE)
+        file_name = file_name.decode('utf-8').rstrip('\x00')
         return file_name
 
     def __get_full_encrypted_file(self, message):
