@@ -23,8 +23,9 @@ public:
 	void do_wait() const;
 	boost::asio::streambuf* get_response_body();
 	uint16_t get_res_status();
-
+	
 private:
+	bool skip_res = false;
 	void start_wait();
 	Connection connection;
 
