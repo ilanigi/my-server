@@ -112,21 +112,7 @@ void IO_service::handle_read_body(const boost::system::error_code& err) {
 
     if (!err)
     {
-        // Process the response headers.
-        /*std::istream response_stream(&response);
-        std::string header;
-        while (std::getline(response_stream, header) && header != "\r")
-            std::cout << header << "\n";
-        std::cout << "\n";*/
-
-        // Write whatever content we already have to output.
-        /*if (response.size() > 0)
-            std::cout << &response;*/
-
-        // Start reading remaining data until EOF.
-        /*boost::asio::async_read(connection.client_socket, response,
-            boost::asio::transfer_at_least(1),
-            boost::bind(&IO_service::finish_wait, this));*/
+       
         finish_wait();
         connection.client_socket.close();
     }
@@ -135,27 +121,6 @@ void IO_service::handle_read_body(const boost::system::error_code& err) {
         std::cout << "Error: " << err << "\n";
     }
 }
-
-//void IO_service::handle_read_content(const boost::system::error_code& err) {
-//    boost::asio::streambuf response;
-//
-//    if (!err)
-//    {
-//        // Write all of the data that has been read so far.
-//        std::cout << &response;
-//
-//        // Continue reading remaining data until EOF.
-//        boost::asio::async_read(socket, response,
-//            boost::asio::transfer_at_least(1),
-//            boost::bind(&IO_service::handle_read_content, this,
-//                boost::asio::placeholders::error));
-//    }
-//    else if (err != boost::asio::error::eof)
-//    {
-//        std::cout << "Error: " << err << "\n";
-//    }
-//} 
-
 
 void IO_service::send(unsigned int req_code, size_t payload_size, std::vector<char> payload, std::vector<char> client_id) {
     skip_res = req_code == REQ_CODE::CRC_FAILED || req_code == REQ_CODE::CRC_INVALID;
