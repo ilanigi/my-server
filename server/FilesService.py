@@ -54,7 +54,7 @@ class Files:
         
 
     def set_verify_true(self, file_name, client_id):
-        self.db.clients.update(
+        self.db.files.update(
             (["id", "name"], [client_id, file_name]), (["verified"], [True]))
         
         return
