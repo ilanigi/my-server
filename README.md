@@ -11,7 +11,7 @@ To run the code on visual studio - make sure you do the following:
 - make sure all code source file are visible in 'filter' file explorer mode. 
 This can be done be dragging the files from their folder in windows file explorer to the file explorer in visual studio.
 
-Python server can run via python using main file or via vs code. I used python 3.11 but it can also run on python 3.7.
+Python server can run via python using main file or via vs code. I used python 3.11 but it can also run on python 3.7. I added launch.json file so you can easily run it in VS code 
 
 HOW DOES THE SERVER WORKS?
 On init, server is building the database. If Db exist he use it. 
