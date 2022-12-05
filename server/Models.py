@@ -13,7 +13,7 @@ class REQ_CODE(Enum):
     SEND_FILE = 1103
     CRC_VALID = 1104
     CRC_INVALID = 1105
-    CRC_FAILED = 110
+    CRC_FAILED = 1106
 
 class RES_CODE(Enum):
     ACC_REGISTER = 2100
@@ -30,8 +30,9 @@ class Request_Header:
         self.code = code
         self.payload_size = payload_size
 
+
 class Response:
-    def __init__(self, code:RES_CODE, RES_FORMAT, payload_size,payload ) -> None:
+    def __init__(self, code:RES_CODE, RES_FORMAT, payload_size, payload ) -> None:
         TOTAL_RES_FORMAT = RES_FORMAT_BASE + RES_FORMAT
         self.compiled = pack(TOTAL_RES_FORMAT,VERSION, code, payload_size, *payload)
 
@@ -51,11 +52,6 @@ class ACC_PUBLIC_KEY (Response):
         payload_size = len(client_id)+len(AES_key)
         super().__init__(RES_CODE.ACC_PUBLIC_KEY.value, RES_FORMAT,payload_size,(client_id, AES_key))
 
-    
-class REGISTER_FAILED(Response):
-    def __init__(self) -> None:
-        super().__init__(RES_CODE.REGISTER_FAILED.value, "", 0, (None))
-    pass
 class ACC_FILE(Response):
     def __init__(self, client_id, content_size, file_name, checksum) -> None:
         RES_FORMAT = f'{len(client_id)}sI{NAME_SIZE}sI'
@@ -63,9 +59,18 @@ class ACC_FILE(Response):
         super().__init__(RES_CODE.ACC_FILE.value, RES_FORMAT, payload_size, (client_id, content_size, bytes(file_name ,'utf-8'), checksum))
     pass
 
-class ACC_MESSAGE(Response):
+class Empty_response:
+    def __init__(self, code:RES_CODE) -> None:
+        self.compiled = pack(RES_FORMAT_BASE,VERSION, code, 0)
+    
+class REGISTER_FAILED(Empty_response):
     def __init__(self) -> None:
-        super().__init__(RES_CODE.ACC_MESSAGE.value, "", 0, (None))
+        super().__init__(RES_CODE.REGISTER_FAILED.value)
+    pass
+
+class ACC_MESSAGE(Empty_response):
+    def __init__(self) -> None:
+        super().__init__(RES_CODE.ACC_MESSAGE.value)
     pass
         
 
