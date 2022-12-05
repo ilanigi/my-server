@@ -1,5 +1,4 @@
 from Server import Server
-from Test import Test
 
 def main():
     server = Server()

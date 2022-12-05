@@ -3,12 +3,15 @@ import uuid
 from Models import RES_CODE
 MAX_USER_NAME = 100
 class Controller:
-    
+    """
+    the controller class is the actual handling for each request, using the services
+    """
     def __init__(self, services:Services) -> None:
         self.__services = services
         pass
 
     def register(self,user_name:str):
+        """register a given user by name if user is not already exist"""
         try:
             if len(user_name) > MAX_USER_NAME:
                 raise Exception('user name is too long')
@@ -26,6 +29,9 @@ class Controller:
             return self.__services.send.message(RES_CODE.REGISTER_FAILED.value,(None))
     
     def send_key(self,client_id, public_key):
+        """
+        getting public key from user and, encrypting a new AES key and sending it back
+        """
         try:
             if not self.__services.users.client_exist_by_id(client_id):
                 raise Exception('user not exist')
@@ -49,6 +55,9 @@ class Controller:
             return b''
     
     def receive_file(self,client_id:bytes, encrypted_file:bytes,file_name:str):
+        """
+        receiving a file from user, decrypting it, calculating it's checksum using c2c32 and adding it to db and memory
+        """
         try:
             if not self.__services.users.client_exist_by_id(client_id):
                 raise Exception('user not exist')
@@ -67,6 +76,7 @@ class Controller:
             return b''
 
     def verify_file(self, client_id, file_name ):
+        """this means client has approved that file send successfully by checksum. set file validation to true in db"""
         try:
             if not self.__services.users.client_exist_by_id(client_id):
                 raise Exception('user not exist')
@@ -82,6 +92,9 @@ class Controller:
             return b''
     
     def remove_file(self,client_id,file_name):
+        """
+        remove file in case it is not send well
+        """
         try:
             if not self.__services.users.client_exist_by_id(client_id):
                 raise Exception('user not exist')

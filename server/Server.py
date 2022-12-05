@@ -16,6 +16,9 @@ PUBLIC_KEY_SIZE = 160
 
 class Server:
     def __init__(self,test=False):
+        """
+        create all server dependencies
+        """
         try:
             db = Database()
             services = Services(db)
@@ -32,6 +35,7 @@ class Server:
                 self.__connection.selector.close()
 
     def __listen(self):
+        
         while True:
             events = self.__connection.selector.select(timeout=TIMEOUT)
             for key, mask in events:
@@ -41,6 +45,9 @@ class Server:
                     self.__service_connection(key, mask)
 
     def __accept_wrapper(self,sock):
+        """
+        accepting connection and setting socket ready for new requests
+        """
         conn, addr = sock.accept()  
         conn.setblocking(False)
         data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")
@@ -48,6 +55,9 @@ class Server:
         self.__connection.selector.register(conn, events, data=data)
 
     def __service_connection(self, key, mask):
+        """
+        accepting a new message, handing it to request handler and sending it's response
+        """
         self.socket = key.fileobj
         message = key.data
         if mask & selectors.EVENT_READ:
@@ -64,6 +74,9 @@ class Server:
                 message.outb = message.outb[sent:]
 
     def handle_request(self,message):
+        """
+        parsing request header and calling controller method by request handling
+        """
         try:
             res = b''
             header = Request_Header(message)
