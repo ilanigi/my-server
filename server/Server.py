@@ -42,7 +42,6 @@ class Server:
 
     def __accept_wrapper(self,sock):
         conn, addr = sock.accept()  
-        print(f"Accepted connection from {addr[0]}")
         conn.setblocking(False)
         data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
@@ -56,7 +55,6 @@ class Server:
             if message_start:
                 message.outb = self.handle_request(message_start)
             else:
-                print(f"Closing connection to {message.addr[0]}")
                 self.__connection.selector.unregister(self.socket)
                 self.socket.close()
         if mask & selectors.EVENT_WRITE:
