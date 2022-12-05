@@ -13,6 +13,8 @@ This can be done be dragging the files from their folder in windows file explore
 
 Python server can run via python using main file or via vs code. I used python 3.11 but it can also run on python 3.7. I added launch.json file so you can easily run it in VS code 
 
+I recommend open client folder in visual studio and server folder in vs code and run it together this way.
+
 HOW DOES THE SERVER WORKS?
 On init, server is building the database. If Db exist he use it. 
 after that the services are contracting - which are al depended on the db.
